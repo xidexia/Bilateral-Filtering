@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html class="full" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../favicon.ico"> -->
+
+    <title>TextMining</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/justified-nav.css" rel="stylesheet">
+
+    <link rel="stylesheet" id="font-awesome-css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" type="text/css" media="screen">
+
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <style>
+      p {
+        font-size: 15px;
+      }
+      img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width:50%;
+      }
+      form {
+        margin-left:18px;
+      }
+      ol>li {
+        font-size:15px;
+      }
+      .back-to-top {
+        position: fixed;
+        bottom: 2em;
+        right: 0px;
+        text-decoration: none;
+        color: #000000;
+        background-color: rgba(235, 235, 235, 0.80);
+        font-size: 12px;
+        padding: 1em;
+        display: none;
+      }
+
+      .back-to-top:hover {    
+          background-color: rgba(135, 135, 135, 0.50);
+      }
+    </style>
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <a href="#" class="back-to-top">Back to Top</a>
+
+    <div class="container">
+
+      <!-- The justified navigation menu is meant for single line per list item.
+           Multiple lines will require custom code not provided by Bootstrap. -->
+      <div class="masthead">
+        <img src="img/acknowledge.png" style="width:1150px">
+        <h3 class="text-muted">Opinion Mining and Sentiment Analysis of TripAdvisor Hotel Reviews</h3>
+        <nav>
+          <ul class="nav nav-justified">
+            <li class="active"><a id="ahome" href="#" data="#home">Home</a></li>
+            <li><a id="aintroduction" href="#" data="#introduction">Introduction</a></li>
+            <li><a id="amethod" href="#" data="#method">Methods</a></li>
+            <li><a id="aresults" href="#" data="#results">Results</a></li>
+            <li><a id="aconclusions" href="#" data="#conclusions">Conclusions</a></li>
+          </ul>
+        </nav>
+      </div>
+
+
+      <div id="home">
+        <!-- Jumbotron -->
+        <div class="jumbotron">
+          <h2>Opinion Mining and Sentiment Analysis of TripAdvisor Hotel Reviews</h2>
+          <p class="lead">Yaxiong Cai, Toby Du, Peiheng Hu, Arjun Sanghvi</p>
+          <p>AC297r: Capstone Project </p>
+          <p>Instructor: Pavlos Protopapas, TF: Rahul Dave</p>
+          <p>
+            <span class="slogan"></span>
+          </p>
+          <p><a class="btn btn-lg btn-success" href="https://murmuring-garden-1723.herokuapp.com/" role="button" target="_blank">Try Live Demo</a></p>
+        </div>
+
+        <!-- Example row of columns -->
+        <div class="row">
+          <div class="col-lg-4">
+            <h2>Keyword Extraction</h2>
+            <p>Extract the most informative words from reviews</p>
+            <p><a class="btn btn-primary detail" href="#pair" role="button" data="#amethod">View details &raquo;</a></p>
+          </div>
+          
+          <div class="col-lg-4">
+            <h2>Topic Analysis</h2>
+            <p>Classification of keywords into topics</p>
+            <p><a class="btn btn-primary detail" href="#topic" role="button" data="#amethod">View details &raquo;</a></p>
+          </div>
+
+          <div class="col-lg-4">
+            <h2>Sentiment Analysis</h2>
+            <p>Quantification of text positivity</p>
+            <p><a class="btn btn-primary detail" href="#sentiment" role="button" data="#amethod">View details &raquo;</a></p>
+          </div>
+        </div>  
+
+      </div>
+
+      <div id="introduction", class="hidden">
+        <h2>Introduction</h2>
+        <p>TripAdvisor, founded in 2000, is a public company that operates various travel websites providing travel-related content, such as editorial reviews of hotels, in addition to providing a free forum for user discussion. The company has about 2400 employees worldwide, and websites that are part of the TripAdvisor Group attract greater than 100 million monthly views. While revenue is primarily generated through advertising, user-generated content (such as photographs, ratings, and reviews) has become the backbone of the company. TripAdvisor has become such an integral part of travel business worldwide, that it holds enough sway to single-handedly make or break a hotel depending on how that hotel is portrayed on the Trip Advisor website. SmarterTravel, founded in 1998 and acquired by TripAdvisor in 2007, offers a portfolio of travel sites that can be searched simultaneously to explore prices. Jetsetter, founded in 2009 and acquired by TripAdvisor in 2013, acts as an online travel agency catering to customers searching for higher quality (higher price) accommodations.</p>
+        <p>The massive amount of user-generated content posted on Trip Advisor is an invaluable resource of feedback for hotels and Trip Advisor itself. With this feedback, Trip Advisor can conduct internal improvement efforts, in addition to working with hotels to improve the customer experience. To date, Trip Advisor has used the labor intensive and potentially biased method of manually analyzing a small subset of the reviews. The goal of this project, therefore, is to construct an automated system (software) for analyzing free-form text responses. The output of this analysis will include extraction of informative word pairs (e.g. “great location”) in addition to calculation of a sentiment score.</p>
+        <p>This is our understanding of the relationship between TripAdvisor, hotels, and customers:</p>
+        <img src="img/BusinessCycle.jpg">
+
+      </div>
+
+      <div id="method", class="hidden">
+        <h2>Methods</h2>
+        <p>We used text mining and natural language processing to extract useful information from text reviews. After exploring the data, it became clear that the most relevant insights were posed in a pairwise, adjective-noun format. Categorization of text clearly lends itself to classification, and we tested various machine learning algorithms for this purpose. To quantify sentiment, we went beyond commonly used packages for automatic identification of polarity, and instead combined the results from several different methods. The overall framework of our process is shown here, and we detail each part below:</p>
+        <img src="img/flow1.png" width="40%">
+        <br>
+
+        <div id="pair">
+          <h3>1. Pair Extraction</h3>
+          <h4>1.1 Dependency Tree</h4>
+          <p>We use a package named “spaCy” to parse each sentence into a dependency tree. A dependency tree is a grammatical model that uses part of speech tagging and contextual elements to establish hierarchical relations between words and phrases within a sentence. Within the tree structure, if word A is under word B, it means word A depends on B. If a noun is the subject of the adjective, this noun shares the same head with the adjective. Therefore, we can use the dependency tree to identify noun-adjective associations.</p>
+          <p>Here is an example of a dependency tree:</p>
+          <img src="img/denpendency.png">
+          <p>To find the noun-adjective pairs we use the following procedure:</p>
+          <p>For each noun:</p>
+          <p>Step 1) Go one level up and take this word as the head. If the noun is at the top of the tree, put itself as the head. In this example, we start with the noun “location” and find that the head is the word “is.”</p>
+          <p>Step 2) Find adjectives under this head. Here, the adjectives are “great” and “walkable.” If no adjectives are detected, go back to Step1.</p>
+          <p>Step 3) Find adverbs under the adjectives. In this case, we find “easily” associated with “walkable.”</p>
+          <p>Note that the next step in this process would be to consider the nouns “downtown” and “Napa.” In both cases, the associated head is not associated with any adjectives. Therefore, we do not extract these words.</p>
+          <p>The underlying algorithm that enables the construction of the dependency tree is based on the training of a shift-reduce dependency parser on the popular Penn Treebank corpus. While this corpus consists of published articles from the Wall Street Journal, our data has no such guaranteed grammatical structure. Indeed, many of the reviews we analyze are collections of text fragments, not sentences. As a result, we can achieve an F1 score of around 60%. To improve this result we looked to another method.</p>
+          <br>
+          <h4>1.2 Chunk Tags</h4>
+          <p>This method uses the Penn Treebank II tags in the package “Pattern”. Instead of parsing a sentence into a dependency tree, it tags each word with two labels: POS tags, Chunk tags. Chunk tags are assigned to phrases. If a group of words is a phrase, they are assigned the same chunk tag and there is an extra tag “B-” to indicate the preceding word of this chunk.</p>
+          <p>A given adjective may be found associated with the tag “NP”: noun phrase or the tag “ADJP”: adjective phrase. To extract noun and adjective pairs, we need to deal with these two cases differently.</p>
+          <p>Case 1: “NP”:</p> 
+
+           <pre>                       I     had        a       delicious   pizza      in     the    restaurant
+             tags:     NP     VP       B-NP        NP          NP     B-PP    PP         PP</pre>
+
+          <p>This is the easy case, in which the adjective and noun (“delicious pizza”) are in the same chunk. </p>
+
+          <p>Case 2: “ADJP”:</p>
+          <pre>                    The     staff    is   incredibly    friendly.
+          tags:     B-NP     NP      VP     B-ADJP       ADJP</pre>
+
+          <p>In this case, the corresponding noun of the adjective in ADJP (“friendly”) is the noun before VP (“staff”).<p>
+
+          <p>This method is more accurate than the dependency tree and achieved a 65% F1 score on our data. In the end, we found that a combination of approaches works best. Specifically, if “Chunk tag” can extract at least one pair, we will use that result alone; but if it does not identify any pairs, then a dependency tree is used. This combined approach achieved an F1 score of 68%.</p>
+
+        </div>
+
+        <div id="topic">
+          <h3>2. Topic Analysis</h3>
+          <p>Instead of presenting an unordered list of adjective-noun pairs in the output, we wanted to present the results in an easily interpretable manner. When deciding how to organize the information, we looked to hotel rating systems and found that they tend to consist of only a handful of categories. For example, on TripAdvisor, users provide ratings in the categories of: location, sleep quality, rooms, service, value, and cleanliness. We wanted to stay consistent with this framework, but we also worked with TripAdvisor to identify other categories of particular interest to them. Therefore, in addition to the previously mentioned categories, we also considered: ambiance, amenities, food, Jet Setter, and property. These categories act as the bins in which we place each of the adjective-noun pairs, and provide a more fine-grained view into the performance of hotels in different aspects.</p>
+
+          <h4>2.1 Random Forest Classification</h4>
+          <p>Random forests are a common machine learning method for classification and regression that operate by developing a series of decision trees at training time and outputting the class that has been most commonly identified by individual trees.</p>
+          <p>One of the interesting outcomes of the random forest algorithm is the information about the importance of features. In this context, the important features are key words that contribute the largest increase in probability of topic association. Here we show the important features for the “sleep quality” classifier:</p>
+          <img src="img/topic1.png">
+          
+
+          <h4>2.2 Logistic Regression</h4>
+          <p>Logistic regression is another commonly used machine learning algorithm for classification. Our implementation follows the structure explained in the previous section. After comparing the results of random forests and logistic regression for each of the categories using 10-fold cross validation, we found that the latter performed better in every case.</p>
+          <p>While our initial accuracy metrics were all around 90%, we realized that the training set we had hand coded did not sample equally from all of the categories. Therefore, there was a major issue with imbalanced classes and some classifiers (e.g. sleep quality) labeled every text sample as not being associated with its category. The F1 score was a much more telling metric, and scores initially ranged from 30% to 50%. We then manually labeled up to 150 additional samples for the worst performers and tuned two key parameters. We decided to use regularized logistic regression with an L2 penalty, and therefore tuned the regularization strength. Additionally, since the logistic regression calculates probabilities for each class association given a text sample, the final binary class association calculation is based on whether the result is greater than 0.5 or not. However, this cutoff should be tuned when applied to imbalanced classes, because probabilities tend to be lower simply as a consequence of limited data availability. Here, we show the F1 scores associated with different combinations of regularization strength and cutoff values for the topic: room.</p>
+          <img src="img/LogisticR_Reg_Tuning.png">
+          <p>In this example, the highest F1 score is achieved with the regularization parameter set to 4 and a cutoff of 0.3. For each classifier, we chose the parameters that yielded the best F1 score. An example of classification applied to an adjective-noun pair is shown here:</p>
+          <img src="img/topic3.png">
+          <p>We run the text through each classifier to find the topic association probability.</p>
+
+
+          <h4>2.3 Mapping Pairs and Sentences to Categories</h4>
+          <p>We first apply each topic classifier at the sentence level in order to narrow down the list of topics referenced in the sentence. With the smaller set of categories, we make use of both sentence logistic regression and adjective/noun pair logistic regression, taking 70% weight on adjective/ noun pair logistic regression and 30% weight on sentence logistic regression. We compare this weighted probability to the previously identified cutoffs to determine topic association. This method is superior to using sentence-level or pairwise classification alone.</p>
+        </div>
+
+        <div id="sentiment">
+          <h3>3. Sentiment Analysis</h3>
+          <p>One of the most important outcomes of the project is to provide the sentiment scores for each hotel overall as well as for each specific category within each hotel. The sentiment scores provided are expected to be interpretable, comparable and accurate.</p>
+          <p>To be interpretable, each sentiment score is expected to be between 0 and 1, corresponding to the probability that the text is of positive inclination. A concrete example is given here:</p>
+
+          <div class="well">
+            Pair: “beautiful views”<br>
+            Sentiment score: 0.725 <br>
+            Interpretation: 72.5% probability that the text is positive
+          </div>
+
+          <p>To be comparable across different hotels and different categories, universal score extraction methods that can act on all pairs are expected. For greatest accuracy, two very distinct sentiment extraction algorithms are adopted.</p>
+
+          <h4>3.1 SentiWordnet</h4>
+          <p>The first one is to look up the sentiment scores from the SentiWordnet in NLTK, a lexical resource for opinion mining. SentiWordNet assigns to each synset of WordNet three sentiment scores: positivity, negativity, and objectivity. In this analysis we are particularly interesting in the probability of positivity and negativity. For some of the words, there are multiple meanings and thus, very different sentiment scores. To figure out which specific sentiment we want to choose, we applied an algorithm called Lesk. The Lesk algorithm is a classical algorithm for word sense disambiguation. It compares the dictionary definition of an ambiguous word with the terms contained in its neighborhood and finds the highest similarity from all the definitions. The sentiment associated with this particular definition of the word is assumed to be the most relevant. Both scores of positivity and negativity ranges from 0 to 1, so the overall score from SentiWordNet is indeed from -1 to 1 (negativity scores are, appropriately, negative). We map this score to the interval 0 to 1 for probabilistic interpretation.</p>
+          <h4>3.2 Naïve Bayes</h4>
+          <p>The second method is a supervised machine learning algorithm. The training data is a corpus of movie review data that has been labeled as either positive or negative (i.e. scored for polarity). We implemented a Naïve Bayes classifier because it has been widely used in text classification such as spam filtering. It is simple and fast to use and also it works well with multiple uncorrelated features. After training the classifier, we take the hotel review pairs as input to get the probability that it belongs to the positive label.</p>
+
+          <h4>3.3 Prior</h4>
+          <p>One key characteristic of this dataset is the fact that each review is known to be a response either to the prompt “what I loved” or “what to know.” This information can be used to help infer the type of sentiment expressed in the review. We implemented a Bayesian approach to combine this useful prior information with the calculated adjective sentiment scores (regarded as observations) from the previous methods. Based on the preprocessing of the review data, we decided to assume a normally distributed prior with a mean of 0.3 for the sentiment of reviews from “what to know” and 0.7 for the sentiment of reviews from “what I loved,” in combination with a normal likelihood based on the text analysis. Because of the normal-normal conjugacy and under the assumption of equal variance of prior and likelihood, the posterior mean of the normal-normal posterior, which is the combined sentiment score to be shown as final result, can be easily simplified and calculated following the formula shown below:</p>
+          <img src="img/sentiment.png" style="width:250px">
+          <p>As a brief summary, the sentiment scores are calculated as follows:</p>
+          <ol>
+            <li>Calculate the sentiment score of each pair using 3 different approaches</li>
+            <li>Assume a Bayesian model to combine the results, with two regular methods as two distinct observations, and information from review type as prior</li>
+            <li>Average the sentiment scores over all pairs in a topic</li>
+          </ol>
+
+          <p>One of the most common edge cases not addressed by this model averaging approach is the issue of negation.  The simplest method would be to flip the sentiment score about the 0.5, or neutral, level. However, describing an experience as “not bad” is not the same as saying that it was “good.” Namely, the former is generally of more neutral sentiment than the latter. To account for this, we first remove the negation term (e.g. “not”), calculate the sentiment score using the approach detailed above, and quantify the sentiment through the following mapping:</p>
+
+          <img src="img/negation.png" style="width:350px">
+
+          <p>This transformation can be characterized as reversing the sentiment and making it more neutral. An example is provided here:</p>
+
+          <div class="well">
+            Pair: “not attentive staff”<br>
+            Sentiment score: 0.339 <br>
+            Interpretation: 33.9% probability that the text is positive
+          </div>
+
+
+          <p>Below are the sentiment score distributions separated by the two review types. From the density plots, we can see the difference between the two observations and also the impact of the prior choice.</p>
+          <img src="img/sentiment1.png" style="width:750px">
+        </div>
+      </div>
+
+
+
+      <div id="results", class="hidden">
+        <h2>Results</h2>
+
+        <p>A fully optimized data structure is created that provides the capability and functionality to store all of the extracted keywords, adjectives, and sentiment scores into corresponding classified categories for each hotel. The text output consists of noun-adjective pairs separated into categories and the average sentiment score per category.</p>
+
+        <img src="img/result2.png" style="width:350px">
+
+        <p>Additionally, visualizations can be provided to aid in interpretability and inform insights:</p>
+
+        <img src="img/result3.png"style="width:700px">
+
+        <p>On the left is a sentiment score density plot for the category “ambiance” using review data from the hotel Carmel Valley Ranch. It can be easily seen that this hotel is better than most of the other hotels in this category. On the right is another sentiment score density plot that shows the distribution of average sentiment scores across all categories for all hotels. The red lines indicate the mean and 95% confidence interval for the average sentiment across all categories for hotel Carmel Valley Ranch. From the plot we might infer that this hotel is in the median range overall.</p>
+
+
+        
+      </div>
+
+      <div id="conclusions", class="hidden">
+        <h2>Conclusions</h2>
+        <p>We constructed a system for automated analysis of free form text reviews using hotel data provided by Smarter Travel, a subsidiary of TripAdvisor. In particular, we implemented lexical parsers for information extraction (F1 score: 68%), machine learning algorithms for classification of adjective-noun pairs (F1 score range: 53-71%), and model averaging of unsupervised and supervised approaches with integration of Bayesian priors to quantify sentiment (accuracy: 80%).</p>
+
+        <p>There are several opportunities to improve the performance of the proposed methods. Regarding topic classification, we would most certainly benefit from a larger training set. The 1500 sentences that we manually labeled do not represent all of the categories equally, and the F1 scores tend to correlate with sample size. We could also pursue other approaches altogether. For example, an initial attempt at implementing Latent Dirichlet Allocation was not successful, but perhaps there are useful concepts to adapt from topic modeling. With regard to pair extraction, there are likely many more edge cases that need to be addressed. This is a slow process, but it is necessary for dealing with the complexity inherent in largely unstructured text data. Furthermore, it would be interesting to explore methods for dealing with sarcasm or the use of metaphors. The third component to the project, sentiment analysis, has already achieved performance near the limit of human agreement. However, we may improve our results by using supervised learning with a training set of labeled product reviews instead of movie reviews. In fact, ideally we would manually label the sentiment of thousands of hotel reviews from the given data set and use those samples to train the classifier.</p>
+
+        <p>A key outcome of this project was the integration of the distinct components into an easy-to-use software product. To this end, we have wrapped all of the functionality into a complete software package written in Python, following PEP documentation conventions for code maintainability and clarity. While we have not addressed throughput directly, it does not appear to be a limiting factor, as we have been able to process 200 reviews per 14 seconds on a basic laptop. Moreover, we have built an interactive website that takes in any hotel review and provides the extracted adjective-noun pairs, topic categories, and sentiment scores. The website can be found here: <a href="http://murmuring-garden-1723.herokuapp.com/">Demo</a></p>
+
+        <p>Of course, the framework we proposed and executed here is sufficiently broad such that application to other domains would require only moderate tweaking. Such technology could be used to provide key insights into consumer preferences or user feedback of any product (e.g. reviews of online purchases, movie reviews, comments on magazine articles). These methods could also be extended to allow for real-time exploration of increasingly large text corpora, such as Twitter streams. The utility to be derived from automated analysis of text is undeniable, and technical developments on this front have the potential to transform entire industries.</p>
+        <br>
+
+        <h3>Acknowledgements</h3>
+        <p>We thank Ryan Amari, Bryan Balin, and Chris Stasonis from SmarterTravel for providing the data and helpful insights. We thank Cathy Chute, Rahul Dave, and Pavlos Protopapas from Harvard for their guidance and support.</p>
+        <p>This work was done as part of the AC297r Capstone course at Harvard. You can find more information and other cool projects here: <a href="http://ac297r.org/" target="_blank">AC297r</a></p>
+
+        <h3>Contact information</h3>
+        <p>Yaxiong Cai: yaxiongcai at g.harvard.edu</p>
+        <p>Toby Du: ruitaodu at g.harvard.edu</p>
+        <p>Peiheng Hu: peihenghu at g.harvard.edu</p>
+        <p>Arjun Sanghvi: asanghvi at g.harvard.edu</p>
+        <p>Instructor: Pavlos Protopapas: pavlos at seas.harvard.edu</p>
+        <p>TF: Rahul Dave: rahuldave at gmail.com</p>
+
+      </div>
+
+
+
+      <!-- Site footer -->
+      <footer class="footer">
+        <p>&copy; Cai, Du, Hu, Sanghvi</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript">
+      $("ul.nav-justified li").each(function() {
+        $(this).on("click", function() {
+          var cur_href = $("li.active > a").attr('data');
+          $(cur_href).addClass('hidden')
+          $('ul.nav-justified li.active').removeClass('active')
+          $(this).addClass('active')
+          //var cur_href = $("li.active").attr('href');
+          var cur_href = $("li.active>a").attr('data');
+          //alert(cur_href);
+          $(cur_href).removeClass("hidden");
+        // Toggle classes of divs
+        });
+      });
+
+      $(".detail").each(function() {
+        $(this).on("click", function() {
+          var cur_href = $("li.active > a").attr('data');
+          
+          $(cur_href).addClass('hidden')
+          $('ul.nav-justified li.active').removeClass('active')
+
+          var cur_href = $(this).attr('data');
+          //alert(("a"+cur_href));
+          $("a"+cur_href).parent().addClass('active')
+          //var cur_href = $("li.active").attr('href');
+          var cur_href = $("li.active>a").attr('data');
+          //alert(cur_href);
+          $(cur_href).removeClass("hidden");
+        // Toggle classes of divs
+        });
+      });
+
+      jQuery(document).ready(function() {
+        var offset = 220;
+        var duration = 500;
+        jQuery(window).scroll(function() {
+            if (jQuery(this).scrollTop() > offset) {
+                jQuery('.back-to-top').fadeIn(duration);
+            } else {
+                jQuery('.back-to-top').fadeOut(duration);
+            }
+        });
+        
+        jQuery('.back-to-top').click(function(event) {
+            event.preventDefault();
+            jQuery('html, body').animate({scrollTop: 0}, duration);
+            return false;
+        })
+      });
+    </script>
+    
+
+    <!-- <script src="js/jquery.js"></script> -->
+    <script src="js/typed.min.js"></script>
+    <script>
+      $(function(){
+        $(".slogan").typed({
+          strings: ["Got a lot of reviews?", "Don't have time to read them?","Try our software!"],
+          typeSpeed: 20,
+          loop: true
+        });
+      });
+    </script>
+
+  </body>
+</html>
