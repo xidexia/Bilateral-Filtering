@@ -123,12 +123,18 @@
       </div>
 
       <div id="introduction", class="hidden">
-        <h2>Introduction</h2>
+        <h3>Overview</h3>
         <p>Smoothing is one of the most commonly used image processing methods. To smooth an image or a data set is to create an approximating function that attempts to capture important patterns in the data while leaving the noise points - the data points of a signal are modified so individual points are reduced and points that are lower than the adjacent points are increased leading to a smoother signal. There are many kinds of image smoothing algorithms such as gaussian smoothing, laplace smoothing, and bilateral smoothing. A bilateral filter is a nonlinear, edge-preserving and noise-reducing smoothing filter for images. However, for high resolution images, it would take a long time to run.  It is important that image is processed and analyzed using image processing algorithms at minimum cost. By parallelizing of the algorithm, we can optimize the speed at which the image is processed. This project explores the parallel implementation of. The main objective of this project is to design som bilateral filtering. This parallel algorithm will be able to work with different number of threads and to take all the benefits of the processors.</p>
         <p>In this project, our goal is to develop an efficient algorithm for bilateral filtering. In traditional image processings, image filtering are applied to exert various effects on photos. The center of a selected filter matrix has to be multiplied with the current pixel, the other elements of the filter matrix with corresponding neighbor pixels. In other words, only one pixel’s value is going to be changed at one time. In our project, we plan to improve efficiency via parallel computing. For example, in the smoothing processing, a predefined filter A is applied to the input image. Traditionally, the center of A is multiplied with the current pixel and the adjacent elements of A are multiplied with the adjacent pixels of the image respectively. Then we replace the current pixel’s value with the average of the sum of the multiplication we just calculated before moving to the next pixel. With the help of parallel programming in python and cython, we can try multithreading and spark to boost the performance by updating pixels block by block. </p>
+
+        <h3>Bilateral Filtering</h3>
+        <p>Smoothing is one of the most commonly used image processing methods. To smooth an image or a data set is to create an approximating function that attempts to capture important patterns in the data while leaving the noise points - the data points of a signal are modified so individual points are reduced and points that are lower than the adjacent points are increased leading to a smoother signal. There are many kinds of image smoothing algorithms such as gaussian smoothing, laplace smoothing, and bilateral smoothing. A bilateral filter is a nonlinear, edge-preserving and noise-reducing smoothing filter for images. However, for high resolution images, it would take a long time to run.  It is important that image is processed and analyzed using image processing algorithms at minimum cost. By parallelizing of the algorithm, we can optimize the speed at which the image is processed. This project explores the parallel implementation of. The main objective of this project is to design som bilateral filtering. This parallel algorithm will be able to work with different number of threads and to take all the benefits of the processors.</p>
+
+
         <img src="img/BusinessCycle.jpg">
 
       </div>
+
 
       <div id="method", class="hidden">
         <h2>Methods</h2>
