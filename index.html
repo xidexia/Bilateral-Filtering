@@ -72,8 +72,8 @@
       <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
       <div class="masthead">
-        <img src="img/acknowledge.png" style="width:1150px">
-        <h3 class="text-muted">Opinion Mining and Sentiment Analysis of TripAdvisor Hotel Reviews</h3>
+        <img src="img/logo.png" style="width:1100px" align="middle">
+        <h3 class="text-muted">CS205 Final Project</h3>
         <nav>
           <ul class="nav nav-justified">
             <li class="active"><a id="ahome" href="#" data="#home">Home</a></li>
@@ -89,10 +89,10 @@
       <div id="home">
         <!-- Jumbotron -->
         <div class="jumbotron">
-          <h2>Opinion Mining and Sentiment Analysis of TripAdvisor Hotel Reviews</h2>
-          <p class="lead">Yaxiong Cai, Toby Du, Peiheng Hu, Arjun Sanghvi</p>
-          <p>AC297r: Capstone Project </p>
-          <p>Instructor: Pavlos Protopapas, TF: Rahul Dave</p>
+          <h2>Parallel Bilateral Filtering</h2>
+          <p class="lead">Ruitao (Toby) Du, Xide Xia</p>
+          <p>CS205: Computing Foundations for Computational Science </p>
+          <p>Instructor: Thouis "Ray" Jones </p>
           <p>
             <span class="slogan"></span>
           </p>
@@ -124,9 +124,8 @@
 
       <div id="introduction", class="hidden">
         <h2>Introduction</h2>
-        <p>TripAdvisor, founded in 2000, is a public company that operates various travel websites providing travel-related content, such as editorial reviews of hotels, in addition to providing a free forum for user discussion. The company has about 2400 employees worldwide, and websites that are part of the TripAdvisor Group attract greater than 100 million monthly views. While revenue is primarily generated through advertising, user-generated content (such as photographs, ratings, and reviews) has become the backbone of the company. TripAdvisor has become such an integral part of travel business worldwide, that it holds enough sway to single-handedly make or break a hotel depending on how that hotel is portrayed on the Trip Advisor website. SmarterTravel, founded in 1998 and acquired by TripAdvisor in 2007, offers a portfolio of travel sites that can be searched simultaneously to explore prices. Jetsetter, founded in 2009 and acquired by TripAdvisor in 2013, acts as an online travel agency catering to customers searching for higher quality (higher price) accommodations.</p>
-        <p>The massive amount of user-generated content posted on Trip Advisor is an invaluable resource of feedback for hotels and Trip Advisor itself. With this feedback, Trip Advisor can conduct internal improvement efforts, in addition to working with hotels to improve the customer experience. To date, Trip Advisor has used the labor intensive and potentially biased method of manually analyzing a small subset of the reviews. The goal of this project, therefore, is to construct an automated system (software) for analyzing free-form text responses. The output of this analysis will include extraction of informative word pairs (e.g. “great location”) in addition to calculation of a sentiment score.</p>
-        <p>This is our understanding of the relationship between TripAdvisor, hotels, and customers:</p>
+        <p>Smoothing is one of the most commonly used image processing methods. To smooth an image or a data set is to create an approximating function that attempts to capture important patterns in the data while leaving the noise points - the data points of a signal are modified so individual points are reduced and points that are lower than the adjacent points are increased leading to a smoother signal. There are many kinds of image smoothing algorithms such as gaussian smoothing, laplace smoothing, and bilateral smoothing. A bilateral filter is a nonlinear, edge-preserving and noise-reducing smoothing filter for images. However, for high resolution images, it would take a long time to run.  It is important that image is processed and analyzed using image processing algorithms at minimum cost. By parallelizing of the algorithm, we can optimize the speed at which the image is processed. This project explores the parallel implementation of. The main objective of this project is to design som bilateral filtering. This parallel algorithm will be able to work with different number of threads and to take all the benefits of the processors.</p>
+        <p>In this project, our goal is to develop an efficient algorithm for bilateral filtering. In traditional image processings, image filtering are applied to exert various effects on photos. The center of a selected filter matrix has to be multiplied with the current pixel, the other elements of the filter matrix with corresponding neighbor pixels. In other words, only one pixel’s value is going to be changed at one time. In our project, we plan to improve efficiency via parallel computing. For example, in the smoothing processing, a predefined filter A is applied to the input image. Traditionally, the center of A is multiplied with the current pixel and the adjacent elements of A are multiplied with the adjacent pixels of the image respectively. Then we replace the current pixel’s value with the average of the sum of the multiplication we just calculated before moving to the next pixel. With the help of parallel programming in python and cython, we can try multithreading and spark to boost the performance by updating pixels block by block. </p>
         <img src="img/BusinessCycle.jpg">
 
       </div>
@@ -288,7 +287,7 @@
 
       <!-- Site footer -->
       <footer class="footer">
-        <p>&copy; Cai, Du, Hu, Sanghvi</p>
+        <p>&copy; Du, Xia</p>
       </footer>
 
     </div> <!-- /container -->
