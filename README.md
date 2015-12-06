@@ -62,7 +62,9 @@ Halo = 5;
 #### Performance
 ![](img/compare1.png)
 
-#### Sample Image
+#### Sample Image -- Lion
+![](img/figure_1.png)
+![](img/figure_2.png)
 
 #### Performance
 ![](img/compare2.png)
