@@ -65,6 +65,7 @@ Halo = 5;
 #### Sample Image
 
 #### Performance
+![](img/compare2.png)
 
 
 ### References
