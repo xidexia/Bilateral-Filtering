@@ -4,8 +4,7 @@ import pylab
 import os.path
 import time
 
-#from timer import Timer
-
+import scipy.ndimage as im
 
 def filtering(image, halo=5, sigma=2):
 	height = image.shape[0]
@@ -36,45 +35,10 @@ def filtering(image, halo=5, sigma=2):
 
 	return out_image
 
-	'''
-	stacked = [np.empty_like(image) for i in xrange((2*halo+1)**2)]
-	stacked_df = [np.empty_like(image) for i in xrange((2*halo+1)**2)]
-
-	idx=0
-	for row in range(-halo, 1+halo):
-		for col in range(-halo, 1+halo):
-			#stacked_df.append(padded[halo+row:height+halo+row, halo+col:width+halo+col]-image)
-			#stacked.append(padded[halo+row:height+halo+row, halo+col:width+halo+col])
-			stacked_df[idx] = padded[halo+row:height+halo+row, halo+col:width+halo+col]-image
-			stacked[idx] = padded[halo+row:height+halo+row, halo+col:width+halo+col]
-			idx+=1
-	'''
-
-	print "Finish stack"
-	stacked = np.dstack(stacked)
-
-	stacked_df = np.dstack(stacked_df)
-	stacked_df = np.exp(-0.5*(stacked_df/sigma)**2)*spatial_gaussian
-
-	print "Finish stacked df"
-	stacked *= stacked_df
-
-	print "Calculating out image"
-	sum_weight = np.sum(stacked_df, 2)
-	out_image = np.sum(stacked, 2)
-
-	out_image /= sum_weight
-
-	del stacked
-	del stacked_df
-	del sum_weight
-
-	return out_image
 
 
 
 if __name__ == '__main__':
-	#host_image = np.load('image.npz')['image'].astype(np.float32)[::2, ::2].copy()
     #host_image_filtered = np.zeros_like(host_image)
 
     input_image = np.load('image.npz')['image'].astype(np.float32)#[1200:1800, 3000:3500]

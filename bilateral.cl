@@ -1,4 +1,3 @@
-
 // get pixel
 inline float
 GETPIX (__global float *in_values, int w, int h, int i, int j){
@@ -17,27 +16,50 @@ GETPIX (__global float *in_values, int w, int h, int i, int j){
     return in_values[i+w*j];
 }
 
-inline float
-GetBuffer(__local float *buffer,
-          int buf_w, int buf_h,
-          int buf_x, int buf_y,
-          int i, int j, int halo){
-    if (buf_y < buf_w - 4*halo){
-        return buffer[buf_x+i + buf_w*(buf_y+j)];
+
+/*  No buffer version */
+__kernel void
+bilateral_filtering_no_buffer(__global __read_only float *in_values,
+           __global __write_only float *out_values,
+           __local float *buffer, 
+           __local float *spatial, __global __read_only float *spatial_dif,
+           int w, int h, float sigma,
+           int buf_w, int buf_h,
+           const int halo)
+{
+    // Global position of output pixel
+    const int x = get_global_id(0);
+    const int y = get_global_id(1);
+
+    if ((y < h) && (x < w)) { // stay in bounds
+        float num = 0;
+        float den = 0;
+        float pixel = in_values[x+w*y];
+
+        int idx = 0;
+        for (int i = -halo; i<=halo; ++i){
+            for (int j = -halo; j<=halo; ++j){
+                float tmp_p = GETPIX(in_values, w, h, x+i, y+j);
+                float dif = tmp_p-pixel;
+                //printf("dif:%f, sigma:%f, divide:%f   ", dif, sigma, dif/sigma);
+                //float value = exp(-0.5*(i*i+j*j)/9) * exp(-0.5*(dif*dif)/(sigma*sigma));
+                float value = spatial_dif[idx] * exp(-0.5*(dif*dif)/(sigma*sigma));
+                num += tmp_p*value;
+                den += value;
+                ++idx;
+            }
+        }
+        out_values[ x + w*y ] = num/den;
     }
-    else if (buf_y < buf_w - 2*halo){
-        return buffer[buf_x+i + buf_w*(buf_y+j+2*halo)];
-    }
-    else{
-        return buffer[buf_x+i + buf_w*(buf_y+j-2*halo)];
-    }
+
 }
 
-
+/* With buffer version */
 __kernel void
-bilateral_filtering(__global __read_only float *in_values,
+bilateral_filtering_buffer(__global __read_only float *in_values,
            __global __write_only float *out_values,
-           __local float *buffer,
+           __local float *buffer, 
+           __local float *spatial, __global __read_only float *spatial_dif,
            int w, int h, float sigma,
            int buf_w, int buf_h,
            const int halo)
@@ -73,9 +95,18 @@ bilateral_filtering(__global __read_only float *in_values,
 
 
     /* No-reused buffer */
-    if (idx_1D < buf_w){
-        for (int row = 0; row < buf_h; row++) {
-            buffer[row * buf_w + idx_1D] = GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
+    const int size = (2*halo+1);
+
+    if (idx_1D<buf_w){
+        for (int row = 0; row < buf_h; ++row) {
+            buffer[row * buf_w + idx_1D] = \
+                GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
+        }
+    }
+
+    if (idx_1D<size){
+        for (int row=0; row<size; ++row){
+            spatial[idx_1D + row*size] = spatial_dif[idx_1D + row*size];
         }
     }
 
@@ -90,46 +121,28 @@ bilateral_filtering(__global __read_only float *in_values,
         float den = 0;
         float pixel = in_values[x+w*y];
 
+        int idx = 0;
         for (int i = -halo; i<=halo; ++i){
             for (int j = -halo; j<=halo; ++j){
                 // get value of neighbourhood
                 float tmp_p = buffer[buf_x+i + buf_w*(buf_y+j)];
                 float dif = tmp_p-pixel;
-                float value = exp(-0.5*(i*i+j*j)/(sigma*sigma)) * exp(-0.5*(dif*dif)/(sigma*sigma));
+                float value = spatial[idx] * exp(-0.5*(dif*dif)/(sigma*sigma));
                 num += tmp_p*value;
                 den += value;
+                ++idx;
             }
         }
 
         out_values[ x + w*y ] = num/den;
     }
-    /**/
-
-    /*  No buffer version 
-    if ((y < h) && (x < w)) { // stay in bounds
-        float num = 0;
-        float den = 0;
-        float pixel = in_values[x+w*y];
-
-
-        for (int i = -halo; i<=halo; ++i){
-            for (int j = -halo; j<=halo; ++j){
-                float tmp_p = GETPIX(in_values, w, h, x+i, y+j);
-                float dif = tmp_p-pixel;
-                //printf("dif:%f, sigma:%f, divide:%f   ", dif, sigma, dif/sigma);
-                float value = exp(-0.5*(i*i+j*j)/(sigma*sigma)) * exp(-0.5*(dif*dif)/(sigma*sigma));
-                num += tmp_p*value;
-                den += value;
-            }
-        }
-        out_values[ x + w*y ] = num/den;
-    }*/
 
 }
 
 
+/* Buffer version with index trick */
 __kernel void
-bilateral_filtering_reuse(__global __read_only float *in_values,
+bilateral_filtering_index(__global __read_only float *in_values,
            __global __write_only float *out_values,
            __local float *buffer, int mod,
            __local float *spatial, __global __read_only float *spatial_dif,
@@ -161,6 +174,16 @@ bilateral_filtering_reuse(__global __read_only float *in_values,
     //const int local_x = get_local_size(0);
     const int local_y = get_local_size(1);
 
+    const int size = (2*halo+1);
+
+    if (idx_1D<size){
+        for (int row=0; row<size; ++row){
+            spatial[idx_1D + row*size] = spatial_dif[idx_1D + row*size];
+        }
+    }
+    
+    barrier(CLK_LOCAL_MEM_FENCE);
+
     for (int base = 0; base < h; base += local_y){
         // Reuse buffer
 
@@ -178,12 +201,6 @@ bilateral_filtering_reuse(__global __read_only float *in_values,
                     buffer[((buf_corner_y + halo + row) % buf_h) * buf_w + idx_1D] = GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
                     
                 }
-            }
-        }
-
-        if (base==0 && idx_1D==buf_w){
-            for (int i=0; i<(2*halo+1) * (2*halo+1); ++i){
-                spatial[i] = spatial_dif[i];
             }
         }
         
@@ -210,13 +227,13 @@ bilateral_filtering_reuse(__global __read_only float *in_values,
                 for (int j = -halo; j<=halo; ++j){
                     // get value of neighbourhood
                     //float tmp_p = buffer[buf_x+i + (( y + halo + j ) & mod) * buf_w];
-                    float tmp_p = buffer[buf_x+i + (( y + halo + j ) & mod) * buf_w];
-                    float dif = tmp_p-pixel;
+                    float tmp_p = buffer[buf_x+i + (( y + halo + j ) % buf_h) * buf_w];
+                    float dif = (tmp_p-pixel);
                     //float value = exp(-0.5*(i*i+j*j)/(sigma*sigma)) * exp(-0.5*(dif*dif)/(sigma*sigma));
                     float value = spatial[idx] * exp(-0.5*(dif*dif)/(sigma*sigma));
                     num += tmp_p*value;
                     den += value;
-                    idx += 1;
+                    ++idx;
                 }
             }
 
