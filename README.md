@@ -25,7 +25,7 @@ This project explores different parallel implementations of bilateral filtering 
     
 **4. OpenCL version with buffer and index trick:** <br>
 	Calculate the output pixels in columnwise parallel. In previous OpenCL methods, we put some pixels to the buffer multiple times. Work group sizes are 16×8, 20×8, 24×8, 28×8, 20×4, 24×4. Instead, we were reusing the buffer by introducing an index trick. Also, to increase the percentage of reused buffer, we set the work group size to be a long thin rectangle: <br>
-	![](img/IndexOverlap.pdf) <br>
+	![](img/IndexOverlap.png) <br>
 	In this way, most of the values in buffer can be reused. 
 
 
@@ -75,8 +75,8 @@ Maximum work group size 512 <br>
 ### Result
 
 #### Parameters
-Spatial \sigma = halo / 2 <br>
-Intensity \sigma = 50 <br>
+Spatial σ = halo / 2 <br>
+Intensity σ = 50 <br>
 
 #### Sample Image
 Bilateral filtering of Cat image with different size of neighborhood 
@@ -92,21 +92,22 @@ Bilateral filtering of Harvard Library image with different size of neighborhood
 ##### Serial vs OpenCL
 
 ##### Workgroup
-Without buffer:
+**Without buffer: Best work group is 16×16** <br>
 ![](img/without_buffer.png) <br>
-Best work group is 16×16
 
-With buffer:
+
+**With buffer: Best work group is 16×16** <br>
 ![](img/with_buffer.png) <br>
-Best work group is 16×16
 
-Buffer with index trick:
+
+**Buffer with index trick: Best work group is 20×8** <br>
 ![](img/with_index.png) <br>
-Best work group is 20×8
+
 
 
 ##### Best method
-![](img/compare2.png)
-Best method: method 3. The one with buffer only.
+**Best method: method 3. The one with buffer only.** <br>
+![](img/compare2.png) <br>
+
 
 ### Acknowledge
