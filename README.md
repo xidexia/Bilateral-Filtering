@@ -4,8 +4,17 @@
 * Xide Xia \<xidexia@g.harvard.edu\>
 * Ruitao (Toby) Du \<ruitaodu@g.harvard.edu\>
 
-### Background and Motivation
+### Project Website
+http://xidexia.github.io/Bilateral-Filtering
 
+### Video
+https://youtu.be/TRVlFCA-YxQ
+
+
+### Background and Motivation
+Bilateral Filtering is one of the most fundamental operations of image processing. It smooths images while preserving edges, by means of a nonlinear combination of nearby image values. It is a non-iterative, local, and simple method that combines gray levels or colors based on both their geometric closeness and their photometric similarity, and prefers near values to distant values in both domain and range. The basic method behind bilateral filtering is to do update the values of pixels based on their neighborhood. It takes a weighted sum of the pixels in a neighborhood. The values of weights depend on the spatial distance between current pixel to the neighbor as well as on the intensity of the pixels. Because of the way the weights are calculated, the bilateral filtering is able to preserve edges while still averaging and getting rid of the noise.
+
+In this project, our goal is to develop an efficient algorithm for bilateral filtering. In traditional image processings, image filtering are applied to exert various effects on photos. The center of a selected filter matrix has to be multiplied with the current pixel, the other elements of the filter matrix with corresponding neighbor pixels. In other words, only one pixel’s value is going to be changed at one time. In our project, we plan to improve efficiency via parallel computing.
 
 
 ### Description
@@ -90,6 +99,7 @@ Bilateral filtering of Harvard Library image with different size of neighborhood
 #### Performance
 
 ##### Serial vs OpenCL
+![](img/serial.png) <br>
 
 ##### Workgroup
 **Without buffer: Best work group is 16×16** <br>
@@ -111,3 +121,11 @@ Bilateral filtering of Harvard Library image with different size of neighborhood
 
 
 ### Acknowledge
+We thank Ray and all CS205 TFs for providing the wonderful course and all helpful instructions.
+
+### Reference
+1. Paris, Sylvain, et al. "A gentle introduction to bilateral filtering and its applications." ACM SIGGRAPH 2007 courses. ACM, 2007.
+
+2. Paris, Sylvain, et al. Bilateral filtering: Theory and applications. Now Publishers Inc, 2009.
+
+3. OpenCL, Khronos. "The open standard for parallel programming of heterogeneous systems." Website. URL http://www. khronos. org/opencl. Symposium on Microarchitecture, MICRO.
