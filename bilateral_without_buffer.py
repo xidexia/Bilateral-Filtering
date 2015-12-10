@@ -61,19 +61,20 @@ if __name__ == '__main__':
     # Send to the device, non-blocking
     cl.enqueue_copy(queue, gpu_in_image, input_image, is_blocking=False)
 
-    local_size = (16, 16)  # 4096 pixels per work group
+    # Set local size and global size
+    local_size = (16, 16)  
     global_size = tuple([round_up(g, l) for g, l in zip(input_image.shape[::-1], local_size)])
     print "Global size:", global_size
+
     width = np.int32(input_image.shape[1])
     height = np.int32(input_image.shape[0])
 
     # sigma for intensity
     sigma = np.float32(50)
 
+    # Plot to compare effect of different neighborhood
     pylab.figure(figsize=(80, 4))
-
     pylab.gray()
-
     fig = pylab.figure(figsize=(60,6))
     fig.set_tight_layout(True)
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
         buf_height = np.int32(local_size[1] + 2 * halo)
         
         # set spatial sigma be half of the neighborhood
-        spatial_sigma = min(1, halo/2)
+        spatial_sigma = max(1, halo/2)
         
         # precompute the spatial gaussian
         spatial_gaussian = []
@@ -122,14 +123,13 @@ if __name__ == '__main__':
         prop_exec.wait()
         total_time = 1e-6 * (prop_exec.profile.end - prop_exec.profile.start)
         
-        #print "####### HALO={} #######".format(halo)
-        #print buf_width, buf_height
-        #print('Finished after {} ms total'.format(total_time))
-        #print('{}, '.format(total_time))
+        print "####### HALO={} #######".format(halo)
+        print('Finished after {} ms total'.format(total_time))
 
         # Show final result
         cl.enqueue_copy(queue, out_image, gpu_out_image, is_blocking=True)
         
+        # subplot every two images
         if halo%2==0:
             pylab.gray()
 
@@ -150,24 +150,4 @@ if __name__ == '__main__':
 
 
     pylab.tight_layout(pad=0, w_pad=0, h_pad=0)
-    #pylab.show()
-    '''
-    pylab.gray()
-    #pylab.imshow(input_image[1200:1800, 3000:3500])
-    fig = pylab.imshow(input_image)
-    pylab.title('Original')
-    #pylab.figure()
-    fig.axes.get_xaxis().set_visible(False)
-    fig.axes.get_yaxis().set_visible(False)
-    pylab.savefig('cat_before.png', bbox_inches = 'tight', pad_inches = 0)
-
-    
-    #pylab.imshow(out_image[1200:1800, 3000:3500])
-    pylab.imshow(out_image)
-    pylab.title("after - zoom")
-    #pylab.show()
-    pylab.savefig('after.png')
-    '''
-    #correct = filtering(input_image, halo_norm, sigma)
-    #assert np.allclose(out_image, correct)
-    
+    pylab.show()

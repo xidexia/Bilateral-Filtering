@@ -14,52 +14,6 @@ def round_up(global_size, group_size):
         return global_size
     return global_size + group_size - r
 
-def filtering(image, halo=1, sigma=10):
-    height = image.shape[0]
-    width = image.shape[1]
-    #out_image = np.empty_like(image)
-
-    # pre-calculate spatial_gaussian
-    spatial_gaussian = []
-    for i in range(-halo, halo+1):
-        for j in range(-halo, halo+1):
-            spatial_gaussian.append(np.exp(-0.5*(i**2+j**2)/(sigma**2)))
-
-    padded = np.pad(image, halo, mode="edge")
-
-    stacked = [np.empty_like(image) for i in xrange((2*halo+1)**2)]
-    stacked_df = [np.empty_like(image) for i in xrange((2*halo+1)**2)]
-
-    idx=0
-    for row in range(-halo, 1+halo):
-        for col in range(-halo, 1+halo):
-            #stacked_df.append(padded[halo+row:height+halo+row, halo+col:width+halo+col]-image)
-            #stacked.append(padded[halo+row:height+halo+row, halo+col:width+halo+col])
-            stacked_df[idx]= padded[halo+row:height+halo+row, halo+col:width+halo+col]-image
-            stacked[idx] = padded[halo+row:height+halo+row, halo+col:width+halo+col]
-            idx+=1
-
-    print "Finish stack"
-    stacked = np.dstack(stacked)
-
-    stacked_df = np.dstack(stacked_df)
-    stacked_df = np.exp(-0.5*(stacked_df/sigma)**2)*spatial_gaussian
-
-    print "Finish stacked df"
-    stacked *= stacked_df
-
-    print "Calculating out image"
-    sum_weight = np.sum(stacked_df, 2)
-    out_image = np.sum(stacked, 2)
-
-    out_image /= sum_weight
-
-    del stacked
-    del stacked_df
-    del sum_weight
-
-    return out_image
-
 
 if __name__ == '__main__':
     # List our platforms
@@ -106,9 +60,9 @@ if __name__ == '__main__':
     # Send to the device, non-blocking
     cl.enqueue_copy(queue, gpu_in_image, input_image, is_blocking=False)
 
-    local_size = (20, 20)  # 64 pixels per work group
+    local_size = (16, 16)  # 64 pixels per work group
     global_size = tuple([round_up(g, l) for g, l in zip(input_image.shape[::-1], local_size)])
-    print global_size
+    print "Global size:", global_size
     width = np.int32(input_image.shape[1])
     height = np.int32(input_image.shape[0])
 
@@ -127,7 +81,7 @@ if __name__ == '__main__':
         buf_height = np.int32(local_size[1] + 2 * halo)
 
         # set spatial sigma be half of the neighborhood
-        spatial_sigma = min(1, halo/2)
+        spatial_sigma = max(1, halo/2)
         
         # precompute the spatial gaussian
         spatial_gaussian = []
@@ -152,35 +106,20 @@ if __name__ == '__main__':
         prop_exec.wait()
         total_time = 1e-6 * (prop_exec.profile.end - prop_exec.profile.start)
         
-        #print "####### HALO={} #######".format(halo)
-        #print buf_width, buf_height
-        #print('Finished after {} ms total'.format(total_time))
-        #print('{}, '.format(total_time))
+        print "####### HALO={} #######".format(halo)
+        print('Finished after {} ms total'.format(total_time))
         res.append(total_time)
     print "Result is", res
 
     # Show final result
     cl.enqueue_copy(queue, out_image, gpu_out_image, is_blocking=True)
 
-    '''
+    
     pylab.gray()
     pylab.imshow(input_image[1200:1800, 3000:3500])
-    #pylab.imshow(input_image)
     pylab.title('before - zoom')
     pylab.figure()
 
     pylab.imshow(out_image[1200:1800, 3000:3500])
-    #pylab.imshow(out_image)
     pylab.title("after - zoom")
     pylab.show()
-    '''
-    
-
-    print "checking"
-    print "Halo is:", halo_norm
-    #correct = filtering(input_image, halo_norm, sigma)
-    #print correct[0:2,0:10]
-    #print out_image[0:2,0:10]
-
-    #assert np.allclose(out_image, correct)
-    

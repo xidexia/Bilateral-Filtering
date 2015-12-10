@@ -41,7 +41,7 @@ bilateral_filtering_no_buffer(__global __read_only float *in_values,
             for (int j = -halo; j<=halo; ++j){
                 float tmp_p = GETPIX(in_values, w, h, x+i, y+j);
                 float dif = tmp_p-pixel;
-                //printf("dif:%f, sigma:%f, divide:%f   ", dif, sigma, dif/sigma);
+
                 //float value = exp(-0.5*(i*i+j*j)/9) * exp(-0.5*(dif*dif)/(sigma*sigma));
                 float value = spatial_dif[idx] * exp(-0.5*(dif*dif)/(sigma*sigma));
                 num += tmp_p*value;
@@ -94,7 +94,7 @@ bilateral_filtering_buffer(__global __read_only float *in_values,
     const bool isOdd = (group_id_x%2==1);
 
 
-    /* No-reused buffer */
+    // Write buffer
     const int size = (2*halo+1);
 
     if (idx_1D<buf_w){
@@ -113,9 +113,7 @@ bilateral_filtering_buffer(__global __read_only float *in_values,
     barrier(CLK_LOCAL_MEM_FENCE);
 
 
-    // Each thread in the valid region (x < w, y < h) should write
-    // back its neighborhood value.
-
+    // Each thread in the valid region (x < w, y < h) should calculate the weighted average
     if ((y < h) && (x < w)) { // stay in bounds
         float num = 0;
         float den = 0;
@@ -176,6 +174,7 @@ bilateral_filtering_index(__global __read_only float *in_values,
 
     const int size = (2*halo+1);
 
+    // Write spatial difference gaussian
     if (idx_1D<size){
         for (int row=0; row<size; ++row){
             spatial[idx_1D + row*size] = spatial_dif[idx_1D + row*size];
@@ -184,38 +183,28 @@ bilateral_filtering_index(__global __read_only float *in_values,
     
     barrier(CLK_LOCAL_MEM_FENCE);
 
+    // Iterate the column
     for (int base = 0; base < h; base += local_y){
-        // Reuse buffer
-
+        
+        // Write buffer
         if (idx_1D < buf_w){
+            // First iteration write buffer
             if (base==0) {
                 for (int row = 0; row < buf_h; ++row) {
                     buffer[row * buf_w + idx_1D] = \
                         GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
                 }
             }
+            // Rest of the iterations reuse part of the buffer
             else {
                 for (int row = buf_h - local_y; row < buf_h; ++row) {
-                    //int cur = ((buf_corner_y + halo + row) & mod) * buf_w + idx_1D;
-                    //int cur = (buf_corner_y + halo + row) % buf_h * buf_w + idx_1D;
-                    buffer[((buf_corner_y + halo + row) % buf_h) * buf_w + idx_1D] = GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
+                    buffer[((buf_corner_y + halo + row) & mod) * buf_w + idx_1D] = GETPIX(in_values, w, h, buf_corner_x + idx_1D, buf_corner_y + row);
                     
                 }
             }
         }
         
         barrier(CLK_LOCAL_MEM_FENCE);
-        /*
-        if (idx_1D==1 && x==1){
-            printf("Buffer: base %d %d %d\n", base, buf_h, buf_w);
-            for (int i=0; i<buf_h; ++i){
-                for (int j=0; j<buf_w; ++j){
-                    printf("%f ", buffer[i*buf_w+j]);
-                }
-                printf("\n");
-            }
-        }
-        */
 
         if ((y < h) && (x < w)) {
             float num = 0;
@@ -225,11 +214,10 @@ bilateral_filtering_index(__global __read_only float *in_values,
             int idx = 0;
             for (int i = -halo; i<=halo; ++i){
                 for (int j = -halo; j<=halo; ++j){
+
                     // get value of neighbourhood
-                    //float tmp_p = buffer[buf_x+i + (( y + halo + j ) & mod) * buf_w];
-                    float tmp_p = buffer[buf_x+i + (( y + halo + j ) % buf_h) * buf_w];
+                    float tmp_p = buffer[buf_x+i + (( y + halo + j ) & mod) * buf_w];
                     float dif = (tmp_p-pixel);
-                    //float value = exp(-0.5*(i*i+j*j)/(sigma*sigma)) * exp(-0.5*(dif*dif)/(sigma*sigma));
                     float value = spatial[idx] * exp(-0.5*(dif*dif)/(sigma*sigma));
                     num += tmp_p*value;
                     den += value;
@@ -240,7 +228,6 @@ bilateral_filtering_index(__global __read_only float *in_values,
             out_values[ x + w*y ] = num/den;
         }
 
-        //base += local_y;
         y += local_y;
         buf_corner_y += local_y;
         barrier(CLK_LOCAL_MEM_FENCE);

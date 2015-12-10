@@ -106,8 +106,11 @@ if __name__ == '__main__':
     # Send to the device, non-blocking
     cl.enqueue_copy(queue, gpu_in_image, input_image, is_blocking=False)
 
-    local_size = (24, 4)  # 64 pixels per work group
-    #global_size = tuple([round_up(g, l) for g, l in zip(input_image.shape[::-1], local_size)])
+    # local size
+    local_size = (20, 8) 
+
+    # Set second number of global size equal to second number of local size
+    # so that we parallelize in columns
     global_size_old = [round_up(g, l) for g, l in zip(input_image.shape[::-1], local_size)]
     global_size_old[1] = local_size[1]
     global_size = tuple(global_size_old)
@@ -115,10 +118,10 @@ if __name__ == '__main__':
     width = np.int32(input_image.shape[1])
     height = np.int32(input_image.shape[0])
 
-
     # sigma for intensity
     sigma = np.float32(50)
 
+    # explore times of different neighborhood
     res = []
     for halo_norm in range(1, 11):
         halo = np.int32(halo_norm)
@@ -127,19 +130,18 @@ if __name__ == '__main__':
         buf_height = 2
         while( buf_height < local_size[1] + 2 * halo):
             buf_height <<= 1
-            #print buf_height,  buf_height < local_size[1] + 2 * halo
-        print "Buffer height", buf_height, local_size[1] + 2 * halo
+
+        # Use bitwise mod instead of the normal mod
         mod = np.int32(buf_height-1)
 
 
         # Each work group will have its own private buffer.
         buf_width = np.int32(local_size[0] + 2 * halo)
         buf_height = np.int32(buf_height)
-        #buf_height = np.int32(local_size[1] + 2 * halo)
         local_memory = cl.LocalMemory(4 * buf_width * buf_height)
 
         # set spatial sigma be half of the neighborhood
-        spatial_sigma = min(1, halo/2)
+        spatial_sigma = max(1, halo/2)
         
         # precompute the spatial gaussian
         spatial_gaussian = []
@@ -154,8 +156,6 @@ if __name__ == '__main__':
         local_memory_2 = cl.LocalMemory(4 * (2*halo+1) ** 2)
 
         total_time = 0
-
-        #print "running reuse"
         
         prop_exec = program.bilateral_filtering_index(queue, global_size, local_size,
                                                       gpu_in_image, gpu_out_image, local_memory, mod,
@@ -166,39 +166,20 @@ if __name__ == '__main__':
         prop_exec.wait()
         total_time = 1e-6 * (prop_exec.profile.end - prop_exec.profile.start)
         
-        #print "####### HALO={} #######".format(halo)
-        #print "Buffer size:", buf_width, buf_height
-        #print('Finished after {} ms total'.format(total_time))
-        #print('{}, '.format(total_time))
+        print "####### HALO={} #######".format(halo)
+        print('Finished after {} ms total'.format(total_time))
         res.append(total_time)
     print "Result is", res
 
     # Show final result
     cl.enqueue_copy(queue, out_image, gpu_out_image, is_blocking=True)
 
-    #print out_image[0, :]
-
-    '''
+    
     pylab.gray()
-    #pylab.imshow(input_image[1200:1800, 3000:3500])
-    pylab.imshow(input_image)
-    pylab.title('before - zoom halo = 5')
+    pylab.imshow(input_image[1200:1800, 3000:3500])
+    pylab.title('before - zoom halo = 10')
     pylab.figure()
 
-    #pylab.imshow(out_image[1200:1800, 3000:3500])
-    pylab.imshow(out_image)
-    pylab.title("after - zoom halo = 5")
+    pylab.imshow(out_image[1200:1800, 3000:3500])
+    pylab.title("after - zoom halo = 10")
     pylab.show()
-    '''
-    '''
-    
-    print
-    print "checking"
-    print "Halo is:", halo_norm
-    correct = filtering(input_image, halo_norm, sigma)
-    print correct[0:2,0:10]
-    print out_image[0:2,0:10]
-
-    assert np.allclose(out_image, correct)
-    '''
-    
