@@ -1,0 +1,90 @@
+Serial:
+####### HALO=1 #######
+Time elapse: 3.97491598129
+####### HALO=2 #######
+Time elapse: 10.6986029148
+####### HALO=3 #######
+Time elapse: 20.9127979279
+####### HALO=4 #######
+Time elapse: 34.6632480621
+
+
+
+OpenCl:
+
+No buffer:
+####### HALO=1 #######
+Finished after 149.31224 ms total
+
+####### HALO=2 #######
+Finished after 296.90224 ms total
+
+####### HALO=3 #######
+Finished after 516.06648 ms total
+
+####### HALO=4 #######
+Finished after 847.09288 ms total
+
+####### HALO=5 #######
+Finished after 1260.8124 ms total
+
+####### HALO=6 #######
+Finished after 1756.94544 ms total
+
+####### HALO=7 #######
+Finished after 2335.14968 ms total
+
+####### HALO=8 #######
+Finished after 2997.35088 ms total
+
+####### HALO=9 #######
+Finished after 3742.27232 ms total
+
+####### HALO=10 #######
+Finished after 4568.17632 ms total
+
+
+With buffer (16+halo, 16+halo):
+####### HALO=1 #######
+Finished after 184.45424 ms total
+####### HALO=2 #######
+Finished after 305.31384 ms total
+####### HALO=3 #######
+Finished after 518.84392 ms total
+####### HALO=4 #######
+Finished after 823.17208 ms total
+####### HALO=5 #######
+Finished after 1203.91696 ms total
+####### HALO=6 #######
+Finished after 1656.62384 ms total
+####### HALO=7 #######
+Finished after 2181.95048 ms total
+####### HALO=8 #######
+Finished after 2782.49616 ms total
+####### HALO=9 #######
+Finished after 3454.72288 ms total
+####### HALO=10 #######
+Finished after 4204.60944 ms total
+
+With reused buffer:
+####### HALO=1 #######
+Finished after 112.87488 ms total
+####### HALO=2 #######
+Finished after 208.88848 ms total
+####### HALO=3 #######
+Finished after 325.78504 ms total
+####### HALO=4 #######
+Finished after 524.49816 ms total
+####### HALO=5 #######
+Finished after 773.01856 ms total
+####### HALO=6 #######
+Finished after 1071.80992 ms total
+####### HALO=7 #######
+Finished after 1419.6416 ms total
+####### HALO=8 #######
+Finished after 1815.86104 ms total
+####### HALO=9 #######
+Finished after 2261.68416 ms total
+####### HALO=10 #######
+Finished after 2756.38864 ms total
+

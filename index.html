@@ -73,7 +73,7 @@
            Multiple lines will require custom code not provided by Bootstrap. -->
       <div class="masthead">
         <img src="img/logo.png" style="width:1100px" align="middle">
-        <h3 class="text-muted">CS205 Final Project</h3>
+        <h3 class="text-muted">Parallel Bilateral Filtering using OpenCL</h3>
         <nav>
           <ul class="nav nav-justified">
             <li class="active"><a id="ahome" href="#" data="#home">Home</a></li>
@@ -89,34 +89,38 @@
       <div id="home">
         <!-- Jumbotron -->
         <div class="jumbotron">
-          <h2>Parallel Bilateral Filtering</h2>
+          <h2>Parallel Bilateral Filtering using OpenCL</h2>
           <p class="lead">Ruitao (Toby) Du, Xide Xia</p>
           <p>CS205: Computing Foundations for Computational Science </p>
           <p>Instructor: Thouis "Ray" Jones </p>
           <p>
             <span class="slogan"></span>
           </p>
-          <p><a class="btn btn-lg btn-success" href="https://murmuring-garden-1723.herokuapp.com/" role="button" target="_blank">Try Live Demo</a></p>
+          <p><a class="btn btn-lg btn-success" href="https://github.com/xidexia/Bilateral-Filtering/tree/master" role="button" target="_blank">Try Our Code</a></p>
+          <center>
+            <iframe width="620" height="445" src="https://www.youtube.com/embed/TRVlFCA-YxQ">
+            </iframe>
+          </center>
         </div>
 
         <!-- Example row of columns -->
         <div class="row">
           <div class="col-lg-4">
-            <h2>Keyword Extraction</h2>
-            <p>Extract the most informative words from reviews</p>
-            <p><a class="btn btn-primary detail" href="#pair" role="button" data="#amethod">View details &raquo;</a></p>
+            <h2>OpenCL without buffer</h2>
+            <p>Compute a batch of points at the same time with OpenCL to speed up the processing</p>
+            <p><a class="btn btn-primary detail" href="#m1" role="button" data="#amethod">View details &raquo;</a></p>
           </div>
           
           <div class="col-lg-4">
-            <h2>Topic Analysis</h2>
-            <p>Classification of keywords into topics</p>
-            <p><a class="btn btn-primary detail" href="#topic" role="button" data="#amethod">View details &raquo;</a></p>
+            <h2>OpenCL with buffer</h2>
+            <p>Further accelerate the calculation by taking advantage of local buffers</p>
+            <p><a class="btn btn-primary detail" href="#m2" role="button" data="#amethod">View details &raquo;</a></p>
           </div>
 
           <div class="col-lg-4">
-            <h2>Sentiment Analysis</h2>
-            <p>Quantification of text positivity</p>
-            <p><a class="btn btn-primary detail" href="#sentiment" role="button" data="#amethod">View details &raquo;</a></p>
+            <h2>OpenCL with buffer and index trick</h2>
+            <p>Use an index trick to reuse part of the buffer of the previous iterations</p>
+            <p><a class="btn btn-primary detail" href="#m3" role="button" data="#amethod">View details &raquo;</a></p>
           </div>
         </div>  
 
@@ -129,12 +133,15 @@
 
         <h1>Bilateral Filtering</h1>
         <p>Bilateral Filtering is one of the most fundamental operations of image processing. It smooths images while preserving edges, by means of a nonlinear combination of nearby image values. It is a non-iterative, local, and simple method that combines gray levels or colors based on both their geometric closeness and their photometric similarity, and prefers near values to distant values in both domain and range. The basic method behind bilateral filtering is to do update the values of pixels based on their neighborhood. It takes a weighted sum of the pixels in a neighborhood. The values of weights depend on the spatial distance between current pixel to the neighbor as well as on the intensity of the pixels. Because of the way the weights are calculated, the bilateral filtering is able to preserve edges while still averaging and getting rid of the noise. </p>
+        <img src="img/formula.png" >
+
+        
 
         Consider a shift-invariant low-pass domain filter applied to an image:
-        <img src="img/1.png" style="width:400px; height:60px;">
+        <img src="img/1.png" style="width:350px; height:60px;">
 
         The bold font for f and h emphasizes the fact that both input and output images may be multi-band. In order to preserve the DC component, it must be:
-        <img src="img/2.png" style="width:280px; height:55px;">
+        <img src="img/2.png" style="width:200px; height:55px;">
 
 
         Range filtering is similarly defined:
@@ -142,18 +149,23 @@
 
 
         In this case, the kernel measures the photometric similarity between pixels. The normalization constant in this case is:
-        <img src="img/4.png"  style="width:400px; height:60px;">
+        <img src="img/4.png"  style="width:300px; height:60px;">
 
         Bilateral filtering method combines domain and range filtering, thereby enforcing both geometric and photometric locality. Combined filtering can be described as follows:
-        <img src="img/5.png"  style="width:400px; height:60px;">
+        <img src="img/5.png"  style="width:450px; height:60px;">
 
         with the normalization:
          <img src="img/6.png"  style="width:400px; height:60px;">
 
         Bilateral filtering method  replaces the pixel value at x with a weighed average of similar and nearby pixel values in x's neighborhood. Pixel values in a small neighborhood are similar to each other. It acts essentially as a standard domain filter- it averages away the small, weakly correlated differences between pixel values caused by noise. 
+        <img src="img/gaussian.png" style="width:300px; height:300px;">
+        <img src="img/0.gif" style="width:1000px; height:300px;">
 
 
-        <img src="img/7.png"  style="width:1000px; height:600px;">
+        <h3>Examples:</h3>
+
+        <img src="img/cat.jpg">
+        
 
 
       </div>
@@ -161,127 +173,78 @@
 
       <div id="method", class="hidden">
         <h2>Methods</h2>
-        <p>We used text mining and natural language processing to extract useful information from text reviews. After exploring the data, it became clear that the most relevant insights were posed in a pairwise, adjective-noun format. Categorization of text clearly lends itself to classification, and we tested various machine learning algorithms for this purpose. To quantify sentiment, we went beyond commonly used packages for automatic identification of polarity, and instead combined the results from several different methods. The overall framework of our process is shown here, and we detail each part below:</p>
-        <img src="img/flow1.png" width="40%">
+        <p>This project explores different parallel implementations of bilateral filtering in OpenCL and compares the performance of them with the serial version in python. Below is four methods we implemented. In these methods, we all precompute the spatial difference first so that we don't need to calculate them multiple times.</p>
         <br>
 
-        <div id="pair">
-          <h3>1. Pair Extraction</h3>
-          <h4>1.1 Dependency Tree</h4>
-          <p>We use a package named “spaCy” to parse each sentence into a dependency tree. A dependency tree is a grammatical model that uses part of speech tagging and contextual elements to establish hierarchical relations between words and phrases within a sentence. Within the tree structure, if word A is under word B, it means word A depends on B. If a noun is the subject of the adjective, this noun shares the same head with the adjective. Therefore, we can use the dependency tree to identify noun-adjective associations.</p>
-          <p>Here is an example of a dependency tree:</p>
-          <img src="img/denpendency.png">
-          <p>To find the noun-adjective pairs we use the following procedure:</p>
-          <p>For each noun:</p>
-          <p>Step 1) Go one level up and take this word as the head. If the noun is at the top of the tree, put itself as the head. In this example, we start with the noun “location” and find that the head is the word “is.”</p>
-          <p>Step 2) Find adjectives under this head. Here, the adjectives are “great” and “walkable.” If no adjectives are detected, go back to Step1.</p>
-          <p>Step 3) Find adverbs under the adjectives. In this case, we find “easily” associated with “walkable.”</p>
-          <p>Note that the next step in this process would be to consider the nouns “downtown” and “Napa.” In both cases, the associated head is not associated with any adjectives. Therefore, we do not extract these words.</p>
-          <p>The underlying algorithm that enables the construction of the dependency tree is based on the training of a shift-reduce dependency parser on the popular Penn Treebank corpus. While this corpus consists of published articles from the Wall Street Journal, our data has no such guaranteed grammatical structure. Indeed, many of the reviews we analyze are collections of text fragments, not sentences. As a result, we can achieve an F1 score of around 60%. To improve this result we looked to another method.</p>
+        <h3>1. Serial version with NumPy</h3>
+        <p>Calculate the output pixel by pixel. For each pixel, we need to calculate the pixel difference within a certain neighborhood. To speed up the process, we vectorize the calculation by utilizing NumPy.</p>
+        <br>
+        <img src="img/p1.png" style="width:1000px; height:400px;">
+        
+        <div id="m1">
+          <h3>2. OpenCL version without buffer</h3>
+          <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group size to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCl code, it directly read from global memory when we access the neighborhood.</p>
           <br>
-          <h4>1.2 Chunk Tags</h4>
-          <p>This method uses the Penn Treebank II tags in the package “Pattern”. Instead of parsing a sentence into a dependency tree, it tags each word with two labels: POS tags, Chunk tags. Chunk tags are assigned to phrases. If a group of words is a phrase, they are assigned the same chunk tag and there is an extra tag “B-” to indicate the preceding word of this chunk.</p>
-          <p>A given adjective may be found associated with the tag “NP”: noun phrase or the tag “ADJP”: adjective phrase. To extract noun and adjective pairs, we need to deal with these two cases differently.</p>
-          <p>Case 1: “NP”:</p> 
-
-           <pre>                       I     had        a       delicious   pizza      in     the    restaurant
-             tags:     NP     VP       B-NP        NP          NP     B-PP    PP         PP</pre>
-
-          <p>This is the easy case, in which the adjective and noun (“delicious pizza”) are in the same chunk. </p>
-
-          <p>Case 2: “ADJP”:</p>
-          <pre>                    The     staff    is   incredibly    friendly.
-          tags:     B-NP     NP      VP     B-ADJP       ADJP</pre>
-
-          <p>In this case, the corresponding noun of the adjective in ADJP (“friendly”) is the noun before VP (“staff”).<p>
-
-          <p>This method is more accurate than the dependency tree and achieved a 65% F1 score on our data. In the end, we found that a combination of approaches works best. Specifically, if “Chunk tag” can extract at least one pair, we will use that result alone; but if it does not identify any pairs, then a dependency tree is used. This combined approach achieved an F1 score of 68%.</p>
-
+          <img src="img/p2.png" style="width:600px; height:600px;">
         </div>
 
-        <div id="topic">
-          <h3>2. Topic Analysis</h3>
-          <p>Instead of presenting an unordered list of adjective-noun pairs in the output, we wanted to present the results in an easily interpretable manner. When deciding how to organize the information, we looked to hotel rating systems and found that they tend to consist of only a handful of categories. For example, on TripAdvisor, users provide ratings in the categories of: location, sleep quality, rooms, service, value, and cleanliness. We wanted to stay consistent with this framework, but we also worked with TripAdvisor to identify other categories of particular interest to them. Therefore, in addition to the previously mentioned categories, we also considered: ambiance, amenities, food, Jet Setter, and property. These categories act as the bins in which we place each of the adjective-noun pairs, and provide a more fine-grained view into the performance of hotels in different aspects.</p>
 
-          <h4>2.1 Random Forest Classification</h4>
-          <p>Random forests are a common machine learning method for classification and regression that operate by developing a series of decision trees at training time and outputting the class that has been most commonly identified by individual trees.</p>
-          <p>One of the interesting outcomes of the random forest algorithm is the information about the importance of features. In this context, the important features are key words that contribute the largest increase in probability of topic association. Here we show the important features for the “sleep quality” classifier:</p>
-          <img src="img/topic1.png">
-          
-
-          <h4>2.2 Logistic Regression</h4>
-          <p>Logistic regression is another commonly used machine learning algorithm for classification. Our implementation follows the structure explained in the previous section. After comparing the results of random forests and logistic regression for each of the categories using 10-fold cross validation, we found that the latter performed better in every case.</p>
-          <p>While our initial accuracy metrics were all around 90%, we realized that the training set we had hand coded did not sample equally from all of the categories. Therefore, there was a major issue with imbalanced classes and some classifiers (e.g. sleep quality) labeled every text sample as not being associated with its category. The F1 score was a much more telling metric, and scores initially ranged from 30% to 50%. We then manually labeled up to 150 additional samples for the worst performers and tuned two key parameters. We decided to use regularized logistic regression with an L2 penalty, and therefore tuned the regularization strength. Additionally, since the logistic regression calculates probabilities for each class association given a text sample, the final binary class association calculation is based on whether the result is greater than 0.5 or not. However, this cutoff should be tuned when applied to imbalanced classes, because probabilities tend to be lower simply as a consequence of limited data availability. Here, we show the F1 scores associated with different combinations of regularization strength and cutoff values for the topic: room.</p>
-          <img src="img/LogisticR_Reg_Tuning.png">
-          <p>In this example, the highest F1 score is achieved with the regularization parameter set to 4 and a cutoff of 0.3. For each classifier, we chose the parameters that yielded the best F1 score. An example of classification applied to an adjective-noun pair is shown here:</p>
-          <img src="img/topic3.png">
-          <p>We run the text through each classifier to find the topic association probability.</p>
-
-
-          <h4>2.3 Mapping Pairs and Sentences to Categories</h4>
-          <p>We first apply each topic classifier at the sentence level in order to narrow down the list of topics referenced in the sentence. With the smaller set of categories, we make use of both sentence logistic regression and adjective/noun pair logistic regression, taking 70% weight on adjective/ noun pair logistic regression and 30% weight on sentence logistic regression. We compare this weighted probability to the previously identified cutoffs to determine topic association. This method is superior to using sentence-level or pairwise classification alone.</p>
+        <div id="m2">
+          <h3>3. OpenCL version with buffer</h3>
+          <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group size to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCL code, first we read in all neighborhood of a work group to the buffer. And then we access the neighborhood by reading from local memory. This way can save time on accessing the global memory.</p>
+          <br>
+          <img src="img/p3.png" style="width:800px; height:700px;">
         </div>
 
-        <div id="sentiment">
-          <h3>3. Sentiment Analysis</h3>
-          <p>One of the most important outcomes of the project is to provide the sentiment scores for each hotel overall as well as for each specific category within each hotel. The sentiment scores provided are expected to be interpretable, comparable and accurate.</p>
-          <p>To be interpretable, each sentiment score is expected to be between 0 and 1, corresponding to the probability that the text is of positive inclination. A concrete example is given here:</p>
-
-          <div class="well">
-            Pair: “beautiful views”<br>
-            Sentiment score: 0.725 <br>
-            Interpretation: 72.5% probability that the text is positive
-          </div>
-
-          <p>To be comparable across different hotels and different categories, universal score extraction methods that can act on all pairs are expected. For greatest accuracy, two very distinct sentiment extraction algorithms are adopted.</p>
-
-          <h4>3.1 SentiWordnet</h4>
-          <p>The first one is to look up the sentiment scores from the SentiWordnet in NLTK, a lexical resource for opinion mining. SentiWordNet assigns to each synset of WordNet three sentiment scores: positivity, negativity, and objectivity. In this analysis we are particularly interesting in the probability of positivity and negativity. For some of the words, there are multiple meanings and thus, very different sentiment scores. To figure out which specific sentiment we want to choose, we applied an algorithm called Lesk. The Lesk algorithm is a classical algorithm for word sense disambiguation. It compares the dictionary definition of an ambiguous word with the terms contained in its neighborhood and finds the highest similarity from all the definitions. The sentiment associated with this particular definition of the word is assumed to be the most relevant. Both scores of positivity and negativity ranges from 0 to 1, so the overall score from SentiWordNet is indeed from -1 to 1 (negativity scores are, appropriately, negative). We map this score to the interval 0 to 1 for probabilistic interpretation.</p>
-          <h4>3.2 Naïve Bayes</h4>
-          <p>The second method is a supervised machine learning algorithm. The training data is a corpus of movie review data that has been labeled as either positive or negative (i.e. scored for polarity). We implemented a Naïve Bayes classifier because it has been widely used in text classification such as spam filtering. It is simple and fast to use and also it works well with multiple uncorrelated features. After training the classifier, we take the hotel review pairs as input to get the probability that it belongs to the positive label.</p>
-
-          <h4>3.3 Prior</h4>
-          <p>One key characteristic of this dataset is the fact that each review is known to be a response either to the prompt “what I loved” or “what to know.” This information can be used to help infer the type of sentiment expressed in the review. We implemented a Bayesian approach to combine this useful prior information with the calculated adjective sentiment scores (regarded as observations) from the previous methods. Based on the preprocessing of the review data, we decided to assume a normally distributed prior with a mean of 0.3 for the sentiment of reviews from “what to know” and 0.7 for the sentiment of reviews from “what I loved,” in combination with a normal likelihood based on the text analysis. Because of the normal-normal conjugacy and under the assumption of equal variance of prior and likelihood, the posterior mean of the normal-normal posterior, which is the combined sentiment score to be shown as final result, can be easily simplified and calculated following the formula shown below:</p>
-          <img src="img/sentiment.png" style="width:250px">
-          <p>As a brief summary, the sentiment scores are calculated as follows:</p>
-          <ol>
-            <li>Calculate the sentiment score of each pair using 3 different approaches</li>
-            <li>Assume a Bayesian model to combine the results, with two regular methods as two distinct observations, and information from review type as prior</li>
-            <li>Average the sentiment scores over all pairs in a topic</li>
-          </ol>
-
-          <p>One of the most common edge cases not addressed by this model averaging approach is the issue of negation.  The simplest method would be to flip the sentiment score about the 0.5, or neutral, level. However, describing an experience as “not bad” is not the same as saying that it was “good.” Namely, the former is generally of more neutral sentiment than the latter. To account for this, we first remove the negation term (e.g. “not”), calculate the sentiment score using the approach detailed above, and quantify the sentiment through the following mapping:</p>
-
-          <img src="img/negation.png" style="width:350px">
-
-          <p>This transformation can be characterized as reversing the sentiment and making it more neutral. An example is provided here:</p>
-
-          <div class="well">
-            Pair: “not attentive staff”<br>
-            Sentiment score: 0.339 <br>
-            Interpretation: 33.9% probability that the text is positive
-          </div>
-
-
-          <p>Below are the sentiment score distributions separated by the two review types. From the density plots, we can see the difference between the two observations and also the impact of the prior choice.</p>
-          <img src="img/sentiment1.png" style="width:750px">
+        <div id="m3">
+          <h3>4. OpenCL version with buffer and index trick</h3>
+          <p>Calculate the output pixels in columnwise parallel. In previous OpenCL methods, we put some pixels to the buffer multiple times. Work group sizes are 16×8, 20×8, 24×8, 28×8, 20×4, 24×4. Instead, we were reusing the buffer by introducing an index trick. Also, to increase the percentage of reused buffer, we set the work group size to be a long thin rectangle.</p>
+          <br>
+          <img src="img/p4.png" style="width:700px; height:700px;">
         </div>
+
+        <h2>Machine Used</h2>
+        <p>Apple OpenCL version: OpenCL 1.2 </p>
+        <p>CPU: Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz</p> 
+        <p>Maximum clock Frequency: 2200 MHz </p>
+        <p>Maximum allocable memory size: 4294 MB</p> 
+        <p>Maximum work group size 1024 </p>
+        <p>GPU: Iris Pro Maximum clock Frequency: 1200 MHz </p>
+        <p>Maximum allocable memory size: 402 MB </p>
+        <p>Maximum work group size 512 .</p>
+        <br>
+
       </div>
-
 
 
       <div id="results", class="hidden">
         <h2>Results</h2>
+        <br>
 
-        <p>A fully optimized data structure is created that provides the capability and functionality to store all of the extracted keywords, adjectives, and sentiment scores into corresponding classified categories for each hotel. The text output consists of noun-adjective pairs separated into categories and the average sentiment score per category.</p>
+        <h2>Parallel Bilateral Filtering in OpenCL</h2>
+        <br>
 
-        <img src="img/result2.png" style="width:350px">
+        <h3>Outputs</h3>
+        <p> To show the performance of our Bilater Filtering processing, we used several different images to test. Following is the output image result of different size of neighborhood:</p>
+        <br>
 
-        <p>Additionally, visualizations can be provided to aid in interpretability and inform insights:</p>
+        <img src="img/cat.png" style="width:1100px; height:700px;">
 
-        <img src="img/result3.png"style="width:700px">
+        <h3>Runtime</h3>
+        <br>
 
-        <p>On the left is a sentiment score density plot for the category “ambiance” using review data from the hotel Carmel Valley Ranch. It can be easily seen that this hotel is better than most of the other hotels in this category. On the right is another sentiment score density plot that shows the distribution of average sentiment scores across all categories for all hotels. The red lines indicate the mean and 95% confidence interval for the average sentiment across all categories for hotel Carmel Valley Ranch. From the plot we might infer that this hotel is in the median range overall.</p>
+        <h4>Serial vs. Parallel</h4>
+        <br>
+        <img src="img/r0.png" style="width:580px; height:550px;">
+
+        <h4>Workgroup</h4>
+        <br>
+        <img src="img/r1.png" style="width:600px; height:600px;">
+        <img src="img/r2.png" style="width:600px; height:600px;">
+        <img src="img/r3.png" style="width:600px; height:600px;">
+        <img src="img/r4.png" style="width:600px; height:600px;">
+
+        <p> From the results, we see a larger neighborhood requires more runtime. It also shows parallel versions are much faster than the serial version. Within the three OpenCL versions, the result shows that using local buffers will save more runtime than using the global memory. However, when we add an index trick, the processing slows down. That’s because although the index trick helps to reuse part of the buffer of previous iterations, it requires extra time to calculate the index and less total number of threads.</p>
 
 
         
@@ -289,26 +252,30 @@
 
       <div id="conclusions", class="hidden">
         <h2>Conclusions</h2>
-        <p>We constructed a system for automated analysis of free form text reviews using hotel data provided by Smarter Travel, a subsidiary of TripAdvisor. In particular, we implemented lexical parsers for information extraction (F1 score: 68%), machine learning algorithms for classification of adjective-noun pairs (F1 score range: 53-71%), and model averaging of unsupervised and supervised approaches with integration of Bayesian priors to quantify sentiment (accuracy: 80%).</p>
+        <p>Bilateral Filtering is one of the most fundamental operations of image processing. In a bilateral filter, there is a spatial filter that measures the geometric closeness between the current point and a nearby point. There is another filter called intensity filter that measures the photometric similarity between the pixel value of the current point and that of a nearby point. Bilateral filtering combines the spatial and intensity filters, thereby enforcing both geometric and photometric locality. </p>
 
-        <p>There are several opportunities to improve the performance of the proposed methods. Regarding topic classification, we would most certainly benefit from a larger training set. The 1500 sentences that we manually labeled do not represent all of the categories equally, and the F1 scores tend to correlate with sample size. We could also pursue other approaches altogether. For example, an initial attempt at implementing Latent Dirichlet Allocation was not successful, but perhaps there are useful concepts to adapt from topic modeling. With regard to pair extraction, there are likely many more edge cases that need to be addressed. This is a slow process, but it is necessary for dealing with the complexity inherent in largely unstructured text data. Furthermore, it would be interesting to explore methods for dealing with sarcasm or the use of metaphors. The third component to the project, sentiment analysis, has already achieved performance near the limit of human agreement. However, we may improve our results by using supervised learning with a training set of labeled product reviews instead of movie reviews. In fact, ideally we would manually label the sentiment of thousands of hotel reviews from the given data set and use those samples to train the classifier.</p>
+        <p>In our project, we explored different parallel implementations of bilateral filtering in openCL and compared their performances with the serial version in python: First, we tried serial version with NumPy. Second, we compute a batch of points at the same time with OpenCL to speed up the processing. Third, with OpenCL, we further accelerate the calculation by taking advantage of local buffers to save time of accessing the global memory. Since for some points, we are accessing their pixel value for multiple times. We finally use an index trick to reuse part of the buffer of the previous iterations.</p>
 
-        <p>A key outcome of this project was the integration of the distinct components into an easy-to-use software product. To this end, we have wrapped all of the functionality into a complete software package written in Python, following PEP documentation conventions for code maintainability and clarity. While we have not addressed throughput directly, it does not appear to be a limiting factor, as we have been able to process 200 reviews per 14 seconds on a basic laptop. Moreover, we have built an interactive website that takes in any hotel review and provides the extracted adjective-noun pairs, topic categories, and sentiment scores. The website can be found here: <a href="http://murmuring-garden-1723.herokuapp.com/">Demo</a></p>
+        <h2>Resource</h2>
 
-        <p>Of course, the framework we proposed and executed here is sufficiently broad such that application to other domains would require only moderate tweaking. Such technology could be used to provide key insights into consumer preferences or user feedback of any product (e.g. reviews of online purchases, movie reviews, comments on magazine articles). These methods could also be extended to allow for real-time exploration of increasingly large text corpora, such as Twitter streams. The utility to be derived from automated analysis of text is undeniable, and technical developments on this front have the potential to transform entire industries.</p>
+        <p> Watch ouor screencast? <a href="https://www.youtube.com/watch?v=TRVlFCA-YxQ" target="_blank">Youtube</a></p>
+        <p> Get our codes? <a href="https://github.com/xidexia/Bilateral-Filtering/tree/master" target="_blank">Github</a></p>
+        <br>
+
+        <h3>Reference</h3>
+        <p>1. Paris, Sylvain, et al. "A gentle introduction to bilateral filtering and its applications." ACM SIGGRAPH 2007 courses. ACM, 2007.</p>
+        <p>2. Paris, Sylvain, et al. Bilateral filtering: Theory and applications. Now Publishers Inc, 2009.</p>
+        <p>3. OpenCL, Khronos. "The open standard for parallel programming of heterogeneous systems." Website. URL http://www. khronos. org/opencl. Symposium on Microarchitecture, MICRO.</p>
         <br>
 
         <h3>Acknowledgements</h3>
-        <p>We thank Ryan Amari, Bryan Balin, and Chris Stasonis from SmarterTravel for providing the data and helpful insights. We thank Cathy Chute, Rahul Dave, and Pavlos Protopapas from Harvard for their guidance and support.</p>
-        <p>This work was done as part of the AC297r Capstone course at Harvard. You can find more information and other cool projects here: <a href="http://ac297r.org/" target="_blank">AC297r</a></p>
+        <p>We thank Ray and all CS205 TFs for providing the wonderful course and all helpful instructions.</p>
+        <p>This work was done as part of the CS205 course at Harvard. You can find more information and other cool projects here: <a href="http://iacs-courses.seas.harvard.edu/courses/cs205/" target="_blank">CS205</a></p>
+        <br>
 
         <h3>Contact information</h3>
-        <p>Yaxiong Cai: yaxiongcai at g.harvard.edu</p>
         <p>Toby Du: ruitaodu at g.harvard.edu</p>
-        <p>Peiheng Hu: peihenghu at g.harvard.edu</p>
-        <p>Arjun Sanghvi: asanghvi at g.harvard.edu</p>
-        <p>Instructor: Pavlos Protopapas: pavlos at seas.harvard.edu</p>
-        <p>TF: Rahul Dave: rahuldave at gmail.com</p>
+        <p>Xide Xia: xidexia at g.harvard.edu</p>
 
       </div>
 
@@ -382,7 +349,7 @@
     <script>
       $(function(){
         $(".slogan").typed({
-          strings: ["Got a lot of reviews?", "Don't have time to read them?","Try our software!"],
+          strings: ["Need a bilateral filter?", "Your filter is too slow?","Speed it up with OpenCL!"],
           typeSpeed: 20,
           loop: true
         });
