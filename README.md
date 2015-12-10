@@ -41,6 +41,8 @@ This project explores different parallel implementations of bilateral filtering 
 
 ### Code Instructions
 
+First, download [this file](https://s3.amazonaws.com/Harvard-CS205/HW2/image.npz "image.npz") and save it as image.npz in the P4 directory
+
 ##### Run serial version of bilateral filtering with NumPy.
 ```
 python bilateral_serial.py
