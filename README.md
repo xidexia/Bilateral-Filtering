@@ -1,8 +1,8 @@
 #### Harvard CS205 Parallel Programming Final Project - Bilateral Filtering using OpenCL
 ============================================
 ### Authors
-* Xide Xia \<xidexia@g.harvard.edu\>
 * Ruitao (Toby) Du \<ruitaodu@g.harvard.edu\>
+* Xide Xia \<xidexia@g.harvard.edu\>
 
 ### Project Website
 http://xidexia.github.io/Bilateral-Filtering
