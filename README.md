@@ -131,6 +131,6 @@ We thank Ray and all CS205 TFs for providing the wonderful course and all helpfu
 
 2. Paris, Sylvain, et al. Bilateral filtering: Theory and applications. Now Publishers Inc, 2009.
 
-3. OpenCL, Khronos. "The open standard for parallel programming of heterogeneous systems." Website. URL http://www. khronos. org/opencl. Symposium on Microarchitecture, MICRO.
+3. OpenCL, Khronos. "The open standard for parallel programming of heterogeneous systems." Website. URL http://www.khronos.org/opencl. Symposium on Microarchitecture, MICRO.
 
 4. Tomasi, Carlo, and Roberto Manduchi. "Bilateral filtering for gray and color images." Computer Vision, 1998. Sixth International Conference on. IEEE, 1998.
