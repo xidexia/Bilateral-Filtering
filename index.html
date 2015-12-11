@@ -167,7 +167,7 @@
 
       <div id="method", class="hidden">
         <h2>Methods</h2>
-        <p>This project explores different parallel implementations of bilateral filtering in OpenCL and compares the performance of them with the serial version in python. Below is four methods we implemented. In these methods, we all precompute the domain kernel first so that we don't need to calculate them multiple times.</p>
+        <p>This project explores different parallel implementations of bilateral filtering in OpenCL and compares the performance of them with the serial version in python. Below are four methods we implemented. In these methods, we all precompute the domain kernel first so that we don't need to calculate them multiple times.</p>
         <br>
 
         <h3>1. Serial version with NumPy</h3>
@@ -177,7 +177,7 @@
         
         <div id="m1">
           <h3>2. OpenCL version without buffer</h3>
-          <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group size to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCl code, it directly read from global memory when we access the neighborhood.</p>
+          <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group sizes to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCL code, it directly reads from global memory when we access the neighborhood.</p>
           <br>
           <img src="img/p2.png" style="width:600px;">
         </div>
