@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <!--<link rel="icon" href="../../favicon.ico"> -->
 
-    <title>Parallel_Bilateral_Filtering</title>
+    <title>Parallel Bilateral Filtering</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -127,43 +127,38 @@
       </div>
 
       <div id="introduction", class="hidden">
-        <h1>Project Overview</h1>
-        <p>Smoothing is one of the most commonly used image processing methods. To smooth an image or a data set is to create an approximating function that attempts to capture important patterns in the data while leaving the noise points - the data points of a signal are modified so individual points are reduced and points that are lower than the adjacent points are increased leading to a smoother signal. There are many kinds of image smoothing algorithms such as Gaussian smoothing, Laplace smoothing, and Bilateral smoothing. A bilateral filter is a nonlinear, edge-preserving and noise-reducing smoothing filter for images. However, for high resolution images, it would take a long time to run. It is important that image is processed and analyzed using image processing algorithms at minimum cost. By parallelizing of the algorithm, we can optimize the speed at which the image is processed. The main objective of this project is to design a parallel bilateral filtering. This parallel algorithm will be able to work with different number of threads and to take all the benefits of the processors. </p>
+        <h2>Project Overview</h2>
+        <p>Smoothing is one of the most commonly used image processing methods. To smooth an image or a data set is to create an approximating function that attempts to capture important patterns in the data while leaving the noise points - the data points of a signal are modified so individual points are reduced and points that are lower than the adjacent points are increased leading to a smoother signal. There are many kinds of image smoothing algorithms such as Gaussian smoothing, Laplace smoothing, and Bilateral smoothing. A bilateral filter is a nonlinear, edge-preserving and noise-reducing smoothing filter for images. However, for high resolution images, it would take a long time to run.</p>
 
-        <p>In this project, our goal is to develop an efficient algorithm for bilateral filtering. In traditional image processing, image filtering are applied to exert various effects on photos. The center of a selected filter matrix has to be multiplied with the current pixel, the other elements of the filter matrix with corresponding neighbor pixels. In other words, only one pixel’s value is going to be changed at one time. In our project, we plan to improve efficiency via parallel computing. For example, in the smoothing processing, a predefined filter A is applied to the input image. Traditionally, the center of A is multiplied with the current pixel and the adjacent elements of A are multiplied with the adjacent pixels of the image respectively. With the help of parallel programming in python and OpenCL, we will try multithreads with local buffers. We will also try some index tricks to further speed up the performance. </p>
+        <p>In this project, our goal is to develop an efficient algorithm for bilateral filtering. In traditional image processing, image filtering is applied to exert various effects on photos. The center of a selected filter matrix has to be multiplied with the current pixel, the other elements of the filter matrix with corresponding neighbor pixels. In other words, only one pixel’s value is going to be changed at one time. In our project, we plan to improve efficiency via parallel computing. For example, in the smoothing processing, a predefined filter A is applied to the input image. Traditionally, the center of A is multiplied with the current pixel and the adjacent elements of A are multiplied with the adjacent pixels of the image respectively. With the help of parallel programming in python and OpenCL, we will try multithreads with local buffers. We will also try some index tricks to further speed up the performance. </p>
+        <br>
 
-        <h1>Bilateral Filtering</h1>
-        <p>Bilateral Filtering is one of the most fundamental operations of image processing. It smooths images while preserving edges, by means of a nonlinear combination of nearby image values. It is a non-iterative, local, and simple method that combines gray levels or colors based on both their geometric closeness and their photometric similarity, and prefers near values to distant values in both domain and range. The basic method behind bilateral filtering is to do update the values of pixels based on their neighborhood. It takes a weighted sum of the pixels in a neighborhood. The values of weights depend on the spatial distance between current pixel to the neighbor as well as on the intensity of the pixels. Because of the way the weights are calculated, the bilateral filtering is able to preserve edges while still averaging and getting rid of the noise. </p>
+        <h2>Bilateral Filtering</h2>
+        <p>Bilateral Filtering is one of the most fundamental operations of image processing. It smooths images while preserving edges, by means of a nonlinear combination of nearby image values. It is a non-iterative, local, and simple method that combines gray levels or colors based on both their geometric closeness and their photometric similarity, and prefers near values to distant values in both domain and range. The basic method behind bilateral filtering is to update the values of pixels based on their neighborhood. It takes a weighted sum of the pixels in a neighborhood. The values of weights depend on the spatial distance between current pixel to the neighbor as well as on the intensity of the pixels. Because of the way the weights are calculated, the bilateral filtering is able to preserve edges while still averaging and getting rid of the noise. </p>
         <img src="img/formula.png" >
 
         
-
-        Consider a shift-invariant low-pass domain filter applied to an image:
+        Domain Filter:
         <img src="img/1.png" style="width:350px;">
-
-        The bold font for f and h emphasizes the fact that both input and output images may be multi-band. In order to preserve the DC component, it must be:
+        In order to preserve the normalize the pixel:
         <img src="img/2.png" style="width:200px;">
 
-
-        Range filtering is similarly defined:
+        Range filtering:
         <img src="img/3.png" style="width:400px;">
-
-
-        In this case, the kernel measures the photometric similarity between pixels. The normalization constant in this case is:
+        In this case, the kernel measures the intensity similarity between pixels. The normalization constant in this case is:
         <img src="img/4.png"  style="width:300px;">
 
-        Bilateral filtering method combines domain and range filtering, thereby enforcing both geometric and photometric locality. Combined filtering can be described as follows:
+        Bilateral filtering method combines domain and range filtering. Therefore, combined filtering is:
         <img src="img/5.png"  style="width:450px;">
-
-        with the normalization:
+        with the normalization constant:
          <img src="img/6.png"  style="width:400px;">
 
-        Bilateral filtering method  replaces the pixel value at x with a weighed average of similar and nearby pixel values in x's neighborhood. Pixel values in a small neighborhood are similar to each other. It acts essentially as a standard domain filter- it averages away the small, weakly correlated differences between pixel values caused by noise. 
+        Bilateral filtering method replaces the pixel value at x with a weighed average of similar and nearby pixel values in x's neighborhood. Pixel values in a small neighborhood are similar to each other. It acts essentially as a standard domain filter- it averages away the small, weakly correlated differences between pixel values caused by noise. 
         <img src="img/gaussian.png" style="width:300px;">
-        <img src="img/0.gif" style="width:1000px;">
+        <br>
 
 
-        <h3>Examples:</h3>
+        <h2>Examples:</h2>
 
         <img src="img/cat_compare.png">
 
@@ -202,7 +197,15 @@
           <img src="img/p4.png" style="width:700px;">
         </div>
 
-        <h2>Machine Used</h2>
+      </div>
+
+
+      <div id="results", class="hidden">
+        <h3>Parameters Used</h3>
+        <p>Spatial σ = halo / 2,       Intensity σ = 50 pixels </p>
+        <p>We use half of the neighborhood size as the spatial sigma because we use gaussian kernel. When the neighbor is two sigma away, the weight should be approximately zero.</p>
+
+        <h3>Machine Used</h3>
         <p>Apple OpenCL version: OpenCL 1.2 </p>
         <p>CPU: Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz</p> 
         <p>Maximum clock Frequency: 2200 MHz </p>
@@ -212,50 +215,50 @@
         <p>Maximum allocable memory size: 402 MB </p>
         <p>Maximum work group size 512 .</p>
         <br>
-
-      </div>
-
-
-      <div id="results", class="hidden">
-        <h2>Results</h2>
-        <br>
-
-        <h2>Parallel Bilateral Filtering in OpenCL</h2>
         <br>
 
         <h3>Outputs</h3>
-        <p> To show the performance of our Bilater Filtering processing, we used several different images to test. Following is the output image result of different size of neighborhood:</p>
-        <br>
-
+        <p> To show the performance of our Bilateral Filtering, we used several different images to test. Following is the output image result of different size of neighborhood:</p>
+        <p>We can see that as the size of neighborhood increases, the image is more blurred. This is because we average the pixel value across more points.</p>
         <img src="img/cat.png" style="width:1100px; height:700px;">
-
-        <h3>Runtime</h3>
         <br>
+
+        <h3>Run Time Comparison</h3>
 
         <h4>Serial vs. Parallel</h4>
-        <br>
+        <p>Serial version is much slower than the parallel one. Even though we calculate a small neighborhood, serial version still takes a few seconds to run while parallel one just takes 0.3 second. Therefore, our OpenCL version is much faster than the serial version. However, we want to further explore our parallel version</p>
         <img src="img/r0.png" style="width:580px; height:550px;">
+        <br>
 
         <h4>Workgroup</h4>
+        <h5>Without Buffer</h5>
+        <p>In our machine, best workgroup is 16 by 16. There is something interesting in the graph. 8 by 8 is very fast when neighborhood is small. However, we can see that after size of 8, the run time rises dramatically. We think it is because small workgroup will seperate the picture into more blocks. When neighborhood size increases, the run time for each block increase in a complexity of N^2. Therefore, if we have more blocks, run time will also increase more.</p>
+        <img src="img/r1.png" style="width:600px;">
         <br>
-        <img src="img/r1.png" style="width:600px; height:600px;">
-        <img src="img/r2.png" style="width:600px; height:600px;">
-        <img src="img/r3.png" style="width:600px; height:600px;">
-        <img src="img/r4.png" style="width:600px; height:600px;">
 
+        <h5>With Buffer</h5>
+        <p>This plot is similar to the without buffer one. Best work group size is still 16 by 16.</p>
+        <img src="img/r2.png" style="width:600px;">
+        <br>
+        <h5>With Buffer and Index Trick</h5>
+        <p>Best work group size is still 20 by 8.</p>
+        <img src="img/r3.png" style="width:600px;">
+        <br>
+
+        <h4>Methods Comparison</h4>
         <p> From the results, we see a larger neighborhood requires more runtime. It also shows parallel versions are much faster than the serial version. Within the three OpenCL versions, the result shows that using local buffers will save more runtime than using the global memory. However, when we add an index trick, the processing slows down. That’s because although the index trick helps to reuse part of the buffer of previous iterations, it requires extra time to calculate the index and less total number of threads.</p>
-
+        <img src="img/r4.png" style="width:600px;">
 
         
       </div>
 
       <div id="conclusions", class="hidden">
-        <h2>Conclusions</h2>
-        <p>Bilateral Filtering is one of the most fundamental operations of image processing. In a bilateral filter, there is a spatial filter that measures the geometric closeness between the current point and a nearby point. There is another filter called intensity filter that measures the photometric similarity between the pixel value of the current point and that of a nearby point. Bilateral filtering combines the spatial and intensity filters, thereby enforcing both geometric and photometric locality. </p>
+        <h3>Conclusions</h3>
+        <p>Bilateral Filtering is one of the most fundamental operations of image processing. From our output, we can see that it can preserve edges and get rid of the noise of our images. In our machine and our sample images, the best method to speed up the bilateral filtering is the OpenCL version with buffer with a work group size of 16 by 16. When the halo size is 10, it takes about 2.5 seconds to finish the filter. This method outperforms the serial version a lot.</p>
 
-        <p>In our project, we explored different parallel implementations of bilateral filtering in openCL and compared their performances with the serial version in python: First, we tried serial version with NumPy. Second, we compute a batch of points at the same time with OpenCL to speed up the processing. Third, with OpenCL, we further accelerate the calculation by taking advantage of local buffers to save time of accessing the global memory. Since for some points, we are accessing their pixel value for multiple times. We finally use an index trick to reuse part of the buffer of the previous iterations.</p>
+        <p>In the future, we can further explore more parallel algorithm such as using CUDA to see which is faster. Also we can speed up the process of other image filtering algorithm with similar parallelized methods.</p>
 
-        <h2>Resource</h2>
+        <h3>Resource</h3>
 
         <p> Watch ouor screencast? <a href="https://www.youtube.com/watch?v=TRVlFCA-YxQ" target="_blank">Youtube</a></p>
         <p> Get our codes? <a href="https://github.com/xidexia/Bilateral-Filtering/tree/master" target="_blank">Github</a></p>
