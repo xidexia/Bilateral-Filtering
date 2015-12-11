@@ -138,35 +138,33 @@
         
 
         Consider a shift-invariant low-pass domain filter applied to an image:
-        <img src="img/1.png" style="width:350px; height:60px;">
+        <img src="img/1.png" style="width:350px;">
 
         The bold font for f and h emphasizes the fact that both input and output images may be multi-band. In order to preserve the DC component, it must be:
-        <img src="img/2.png" style="width:200px; height:55px;">
+        <img src="img/2.png" style="width:200px;">
 
 
         Range filtering is similarly defined:
-        <img src="img/3.png" style="width:400px; height:60px;">
+        <img src="img/3.png" style="width:400px;">
 
 
         In this case, the kernel measures the photometric similarity between pixels. The normalization constant in this case is:
-        <img src="img/4.png"  style="width:300px; height:60px;">
+        <img src="img/4.png"  style="width:300px;">
 
         Bilateral filtering method combines domain and range filtering, thereby enforcing both geometric and photometric locality. Combined filtering can be described as follows:
-        <img src="img/5.png"  style="width:450px; height:60px;">
+        <img src="img/5.png"  style="width:450px;">
 
         with the normalization:
-         <img src="img/6.png"  style="width:400px; height:60px;">
+         <img src="img/6.png"  style="width:400px;">
 
         Bilateral filtering method  replaces the pixel value at x with a weighed average of similar and nearby pixel values in x's neighborhood. Pixel values in a small neighborhood are similar to each other. It acts essentially as a standard domain filter- it averages away the small, weakly correlated differences between pixel values caused by noise. 
-        <img src="img/gaussian.png" style="width:300px; height:300px;">
-        <img src="img/0.gif" style="width:1000px; height:300px;">
+        <img src="img/gaussian.png" style="width:300px;">
+        <img src="img/0.gif" style="width:1000px;">
 
 
         <h3>Examples:</h3>
 
-        <img src="img/cat.jpg">
-        
-
+        <img src="img/cat_compare.png">
 
       </div>
 
@@ -179,13 +177,13 @@
         <h3>1. Serial version with NumPy</h3>
         <p>Calculate the output pixel by pixel. For each pixel, we need to calculate the pixel difference within a certain neighborhood. To speed up the process, we vectorize the calculation by utilizing NumPy.</p>
         <br>
-        <img src="img/p1.png" style="width:1000px; height:400px;">
+        <img src="img/p1.png" style="width:1000px;">
         
         <div id="m1">
           <h3>2. OpenCL version without buffer</h3>
           <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group size to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCl code, it directly read from global memory when we access the neighborhood.</p>
           <br>
-          <img src="img/p2.png" style="width:600px; height:600px;">
+          <img src="img/p2.png" style="width:600px;">
         </div>
 
 
@@ -193,14 +191,14 @@
           <h3>3. OpenCL version with buffer</h3>
           <p>Calculate the output pixels in blockwise parallel. We use OpenCL with different work group size to parallelize the code. Work group sizes are 8×8, 12×12, 16×16, 20×20. Inside the OpenCL code, first we read in all neighborhood of a work group to the buffer. And then we access the neighborhood by reading from local memory. This way can save time on accessing the global memory.</p>
           <br>
-          <img src="img/p3.png" style="width:800px; height:700px;">
+          <img src="img/p3.png" style="width:800px;">
         </div>
 
         <div id="m3">
           <h3>4. OpenCL version with buffer and index trick</h3>
           <p>Calculate the output pixels in columnwise parallel. In previous OpenCL methods, we put some pixels to the buffer multiple times. Work group sizes are 16×8, 20×8, 24×8, 28×8, 20×4, 24×4. Instead, we were reusing the buffer by introducing an index trick. Also, to increase the percentage of reused buffer, we set the work group size to be a long thin rectangle.</p>
           <br>
-          <img src="img/p4.png" style="width:700px; height:700px;">
+          <img src="img/p4.png" style="width:700px;">
         </div>
 
         <h2>Machine Used</h2>
